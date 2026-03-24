@@ -15,7 +15,8 @@ async function buildAll() {
   const distDir = path.resolve(artifactDir, "dist");
   await rm(distDir, { recursive: true, force: true });
 
-  if (process.env.NODE_ENV === "production") {
+  const skipFrontend = process.env.SKIP_FRONTEND_BUILD === "true";
+  if (!skipFrontend) {
     console.log("Building frontend...");
     execSync("pnpm --filter @workspace/initiative run build", {
       cwd: workspaceRoot,
