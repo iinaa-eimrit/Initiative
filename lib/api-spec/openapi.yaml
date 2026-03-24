@@ -1,15 +1,20 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Initiative platform API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: initiatives
+    description: Initiative operations
+  - name: volunteers
+    description: Volunteer operations
+  - name: donations
+    description: Donation operations
 paths:
   /healthz:
     get:
@@ -24,6 +29,150 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /initiatives:
+    get:
+      operationId: listInitiatives
+      tags: [initiatives]
+      summary: List all initiatives
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of initiatives
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Initiative"
+    post:
+      operationId: createInitiative
+      tags: [initiatives]
+      summary: Create a new initiative
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateInitiativeInput"
+      responses:
+        "201":
+          description: Created initiative
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Initiative"
+        "400":
+          description: Validation error
+
+  /initiatives/{id}:
+    get:
+      operationId: getInitiative
+      tags: [initiatives]
+      summary: Get a single initiative
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Initiative detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InitiativeDetail"
+        "404":
+          description: Not found
+
+  /initiatives/{id}/volunteer:
+    post:
+      operationId: volunteerForInitiative
+      tags: [volunteers]
+      summary: Volunteer for an initiative
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VolunteerInput"
+      responses:
+        "201":
+          description: Volunteered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Volunteer"
+        "400":
+          description: Validation error
+
+  /initiatives/{id}/donate:
+    post:
+      operationId: donateToInitiative
+      tags: [donations]
+      summary: Donate to an initiative
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DonationInput"
+      responses:
+        "201":
+          description: Donation recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Donation"
+        "400":
+          description: Validation error
+
+  /initiatives/{id}/leaderboard:
+    get:
+      operationId: getLeaderboard
+      tags: [donations]
+      summary: Get donor leaderboard for an initiative
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Leaderboard entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LeaderboardEntry"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +183,210 @@ components:
       required:
         - status
 
+    Initiative:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        location:
+          type: string
+        status:
+          type: string
+          enum: [active, completed, paused]
+        fundingGoal:
+          type: number
+        fundingRaised:
+          type: number
+        volunteerCount:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        creatorName:
+          type: string
+        imageUrl:
+          type: string
+          nullable: true
+      required:
+        - id
+        - title
+        - description
+        - category
+        - location
+        - status
+        - fundingGoal
+        - fundingRaised
+        - volunteerCount
+        - createdAt
+        - creatorName
+
+    InitiativeDetail:
+      allOf:
+        - $ref: "#/components/schemas/Initiative"
+        - type: object
+          properties:
+            milestones:
+              type: array
+              items:
+                $ref: "#/components/schemas/Milestone"
+            volunteers:
+              type: array
+              items:
+                $ref: "#/components/schemas/Volunteer"
+            topDonors:
+              type: array
+              items:
+                $ref: "#/components/schemas/LeaderboardEntry"
+          required:
+            - milestones
+            - volunteers
+            - topDonors
+
+    Milestone:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        targetAmount:
+          type: number
+        status:
+          type: string
+          enum: [pending, active, completed]
+        order:
+          type: integer
+      required:
+        - id
+        - title
+        - description
+        - targetAmount
+        - status
+        - order
+
+    Volunteer:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        message:
+          type: string
+          nullable: true
+        joinedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - email
+        - joinedAt
+
+    Donation:
+      type: object
+      properties:
+        id:
+          type: integer
+        donorName:
+          type: string
+        amount:
+          type: number
+        message:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - donorName
+        - amount
+        - createdAt
+
+    LeaderboardEntry:
+      type: object
+      properties:
+        rank:
+          type: integer
+        donorName:
+          type: string
+        totalAmount:
+          type: number
+        donationCount:
+          type: integer
+      required:
+        - rank
+        - donorName
+        - totalAmount
+        - donationCount
+
+    CreateInitiativeInput:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 3
+          maxLength: 100
+        description:
+          type: string
+          minLength: 10
+        category:
+          type: string
+        location:
+          type: string
+        fundingGoal:
+          type: number
+          minimum: 0
+        creatorName:
+          type: string
+        imageUrl:
+          type: string
+          nullable: true
+      required:
+        - title
+        - description
+        - category
+        - location
+        - fundingGoal
+        - creatorName
+
+    VolunteerInput:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        message:
+          type: string
+          nullable: true
+      required:
+        - name
+        - email
+
+    DonationInput:
+      type: object
+      properties:
+        donorName:
+          type: string
+        amount:
+          type: number
+          minimum: 1
+        message:
+          type: string
+          nullable: true
+      required:
+        - donorName
+        - amount

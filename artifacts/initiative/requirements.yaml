@@ -1,0 +1,18 @@
+packages:
+  "framer-motion": "For smooth page transitions and component enter animations"
+  "date-fns": "For formatting initiative creation dates and milestones"
+  "react-hook-form": "For robust form state management in create, donate, and volunteer forms"
+  "@hookform/resolvers": "For Zod schema validation integration with react-hook-form"
+
+images:
+  - path: "artifacts/initiative/public/images/hero-abstract.png"
+    description: "A stunning, modern 3D abstract geometric shape in vibrant teal and indigo gradients on a very light background, representing growth and connection, clean SaaS style"
+    aspect_ratio: "16:9"
+  - path: "artifacts/initiative/public/images/pattern-bg.png"
+    description: "Subtle dotted or geometric pattern background with soft emerald green and blue accents, very light and minimal, used for sections"
+    aspect_ratio: "16:9"
+
+notes:
+  - using generated orval hooks from @workspace/api-client-react
+  - wouter for routing
+  - using react-hook-form for forms

@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Initiative"
+version = "1.0.0"
+id = "artifacts/initiative"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25690
+
+[services.development]
+run = "pnpm --filter @workspace/initiative run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/initiative", "run", "build" ]
+publicDir = "artifacts/initiative/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25690"
+BASE_PATH = "/"
