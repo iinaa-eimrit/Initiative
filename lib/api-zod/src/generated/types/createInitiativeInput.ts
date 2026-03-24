@@ -3,8 +3,10 @@
  * Do not edit manually.
  * Api
  * Initiative platform API
- * OpenAPI spec version: 0.1.0
+ * OpenAPI spec version: 0.2.0
  */
+import type { CreateInitiativeInputLifecycleStage } from "./createInitiativeInputLifecycleStage";
+import type { CreateInitiativeInputStructuredPlan } from "./createInitiativeInputStructuredPlan";
 
 export interface CreateInitiativeInput {
   /**
@@ -20,4 +22,6 @@ export interface CreateInitiativeInput {
   fundingGoal: number;
   creatorName: string;
   imageUrl?: string | null;
+  structuredPlan?: CreateInitiativeInputStructuredPlan;
+  lifecycleStage?: CreateInitiativeInputLifecycleStage;
 }

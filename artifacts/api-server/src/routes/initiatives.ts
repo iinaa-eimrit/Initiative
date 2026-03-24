@@ -5,11 +5,13 @@ import {
   milestonesTable,
   volunteersTable,
   donationsTable,
+  updatesTable,
   insertInitiativeSchema,
   insertVolunteerSchema,
   insertDonationSchema,
+  insertUpdateSchema,
 } from "@workspace/db/schema";
-import { eq, ilike, or, sql, desc } from "drizzle-orm";
+import { eq, ilike, or, sql, desc, count } from "drizzle-orm";
 import {
   ListInitiativesQueryParams,
   CreateInitiativeBody,
@@ -20,8 +22,54 @@ import {
   DonateToInitiativeBody,
   GetLeaderboardParams,
 } from "@workspace/api-zod";
+import { calculateTrustScore } from "../services/trustScoreService";
+import { getSuggestedVolunteers } from "../services/volunteerMatchService";
 
 const router: IRouter = Router();
+
+async function getTrustScoreForInitiative(initiativeId: number, initiative: typeof initiativesTable.$inferSelect) {
+  const [updatesResult] = await db
+    .select({ count: count() })
+    .from(updatesTable)
+    .where(eq(updatesTable.initiativeId, initiativeId));
+
+  const milestones = await db
+    .select()
+    .from(milestonesTable)
+    .where(eq(milestonesTable.initiativeId, initiativeId));
+
+  const completedMilestones = milestones.filter((m) => m.status === "completed").length;
+
+  return calculateTrustScore({
+    updatesCount: updatesResult?.count ?? 0,
+    milestonesCompleted: completedMilestones,
+    totalMilestones: milestones.length,
+    volunteerCount: initiative.volunteerCount,
+    fundingRaised: initiative.fundingRaised,
+    fundingGoal: initiative.fundingGoal,
+  });
+}
+
+async function formatInitiativeWithScore(i: typeof initiativesTable.$inferSelect) {
+  const trustScore = await getTrustScoreForInitiative(i.id, i);
+  return {
+    id: i.id,
+    title: i.title,
+    description: i.description,
+    category: i.category,
+    location: i.location,
+    status: i.status,
+    lifecycleStage: i.lifecycleStage,
+    fundingGoal: i.fundingGoal,
+    fundingRaised: i.fundingRaised,
+    volunteerCount: i.volunteerCount,
+    createdAt: i.createdAt.toISOString(),
+    creatorName: i.creatorName,
+    imageUrl: i.imageUrl ?? null,
+    structuredPlan: i.structuredPlan ?? null,
+    trustScore,
+  };
+}
 
 router.get("/", async (req, res) => {
   const query = ListInitiativesQueryParams.safeParse(req.query);
@@ -32,7 +80,6 @@ router.get("/", async (req, res) => {
 
   const { category, status, search } = query.data;
 
-  let dbQuery = db.select().from(initiativesTable);
   const conditions = [];
 
   if (category) {
@@ -54,7 +101,8 @@ router.get("/", async (req, res) => {
     ? await db.select().from(initiativesTable).where(sql`${conditions.reduce((a, b) => sql`${a} AND ${b}`)}`)
     : await db.select().from(initiativesTable).orderBy(desc(initiativesTable.createdAt));
 
-  res.json(initiatives.map(formatInitiative));
+  const results = await Promise.all(initiatives.map(formatInitiativeWithScore));
+  res.json(results);
 });
 
 router.post("/", async (req, res) => {
@@ -72,35 +120,53 @@ router.post("/", async (req, res) => {
 
   const [initiative] = await db.insert(initiativesTable).values(parsed.data).returning();
 
-  // Create default milestones
-  await db.insert(milestonesTable).values([
-    {
-      initiativeId: initiative.id,
-      title: "Launch & Awareness",
-      description: "Launch the initiative and raise initial awareness in the community.",
-      targetAmount: initiative.fundingGoal * 0.25,
-      status: "active",
-      order: 1,
-    },
-    {
-      initiativeId: initiative.id,
-      title: "Community Building",
-      description: "Grow the volunteer network and establish key partnerships.",
-      targetAmount: initiative.fundingGoal * 0.5,
-      status: "pending",
-      order: 2,
-    },
-    {
-      initiativeId: initiative.id,
-      title: "Full Implementation",
-      description: "Execute the core mission and deliver measurable impact.",
-      targetAmount: initiative.fundingGoal,
-      status: "pending",
-      order: 3,
-    },
-  ]);
+  const plan = initiative.structuredPlan as any;
+  if (plan?.milestonesTimeline?.length > 0) {
+    await db.insert(milestonesTable).values(
+      plan.milestonesTimeline.map((m: any, idx: number) => ({
+        initiativeId: initiative.id,
+        title: m.title,
+        description: m.description,
+        targetAmount: m.targetAmount,
+        fundsLocked: m.targetAmount,
+        status: idx === 0 ? ("active" as const) : ("pending" as const),
+        order: idx + 1,
+      }))
+    );
+  } else {
+    await db.insert(milestonesTable).values([
+      {
+        initiativeId: initiative.id,
+        title: "Launch & Awareness",
+        description: "Launch the initiative and raise initial awareness in the community.",
+        targetAmount: initiative.fundingGoal * 0.25,
+        fundsLocked: initiative.fundingGoal * 0.25,
+        status: "active" as const,
+        order: 1,
+      },
+      {
+        initiativeId: initiative.id,
+        title: "Community Building",
+        description: "Grow the volunteer network and establish key partnerships.",
+        targetAmount: initiative.fundingGoal * 0.5,
+        fundsLocked: initiative.fundingGoal * 0.5,
+        status: "pending" as const,
+        order: 2,
+      },
+      {
+        initiativeId: initiative.id,
+        title: "Full Implementation",
+        description: "Execute the core mission and deliver measurable impact.",
+        targetAmount: initiative.fundingGoal,
+        fundsLocked: initiative.fundingGoal,
+        status: "pending" as const,
+        order: 3,
+      },
+    ]);
+  }
 
-  res.status(201).json(formatInitiative(initiative));
+  const result = await formatInitiativeWithScore(initiative);
+  res.status(201).json(result);
 });
 
 router.get("/:id", async (req, res) => {
@@ -144,13 +210,22 @@ router.get("/:id", async (req, res) => {
     .orderBy(desc(sql`SUM(${donationsTable.amount})`))
     .limit(10);
 
+  const updates = await db
+    .select()
+    .from(updatesTable)
+    .where(eq(updatesTable.initiativeId, initiative.id))
+    .orderBy(desc(updatesTable.createdAt));
+
+  const formatted = await formatInitiativeWithScore(initiative);
+
   res.json({
-    ...formatInitiative(initiative),
+    ...formatted,
     milestones: milestones.map((m) => ({
       id: m.id,
       title: m.title,
       description: m.description,
       targetAmount: m.targetAmount,
+      fundsLocked: m.fundsLocked,
       status: m.status,
       order: m.order,
     })),
@@ -159,6 +234,8 @@ router.get("/:id", async (req, res) => {
       name: v.name,
       email: v.email,
       message: v.message,
+      skills: v.skills,
+      matchedScore: v.matchedScore,
       joinedAt: v.joinedAt.toISOString(),
     })),
     topDonors: topDonors.map((d, i) => ({
@@ -166,6 +243,13 @@ router.get("/:id", async (req, res) => {
       donorName: d.donorName,
       totalAmount: d.totalAmount,
       donationCount: Number(d.donationCount),
+    })),
+    updates: updates.map((u) => ({
+      id: u.id,
+      title: u.title,
+      content: u.content,
+      imageUrl: u.imageUrl ?? null,
+      createdAt: u.createdAt.toISOString(),
     })),
   });
 });
@@ -198,6 +282,7 @@ router.post("/:id/volunteer", async (req, res) => {
     name: body.data.name,
     email: body.data.email,
     message: body.data.message ?? null,
+    skills: body.data.skills ?? null,
   });
 
   if (!parsed.success) {
@@ -217,6 +302,8 @@ router.post("/:id/volunteer", async (req, res) => {
     name: volunteer.name,
     email: volunteer.email,
     message: volunteer.message,
+    skills: volunteer.skills,
+    matchedScore: volunteer.matchedScore,
     joinedAt: volunteer.joinedAt.toISOString(),
   });
 });
@@ -264,7 +351,6 @@ router.post("/:id/donate", async (req, res) => {
     .set({ fundingRaised: newRaised })
     .where(eq(initiativesTable.id, initiative.id));
 
-  // Update milestone statuses based on funding progress
   const milestones = await db
     .select()
     .from(milestonesTable)
@@ -277,8 +363,8 @@ router.post("/:id/donate", async (req, res) => {
         .update(milestonesTable)
         .set({ status: "completed" })
         .where(eq(milestonesTable.id, milestone.id));
-    } else if (newRaised < milestone.targetAmount && milestone.status === "pending" && 
-               milestones.findIndex((m) => m.id === milestone.id) === 
+    } else if (newRaised < milestone.targetAmount && milestone.status === "pending" &&
+               milestones.findIndex((m) => m.id === milestone.id) ===
                milestones.filter((m) => newRaised >= m.targetAmount).length) {
       await db
         .update(milestonesTable)
@@ -325,21 +411,89 @@ router.get("/:id/leaderboard", async (req, res) => {
   );
 });
 
-function formatInitiative(i: typeof initiativesTable.$inferSelect) {
-  return {
-    id: i.id,
-    title: i.title,
-    description: i.description,
-    category: i.category,
-    location: i.location,
-    status: i.status,
-    fundingGoal: i.fundingGoal,
-    fundingRaised: i.fundingRaised,
-    volunteerCount: i.volunteerCount,
-    createdAt: i.createdAt.toISOString(),
-    creatorName: i.creatorName,
-    imageUrl: i.imageUrl ?? null,
-  };
-}
+router.get("/:id/updates", async (req, res) => {
+  const idNum = parseInt(req.params.id, 10);
+  if (isNaN(idNum)) {
+    res.status(400).json({ error: "Invalid ID" });
+    return;
+  }
+
+  const updates = await db
+    .select()
+    .from(updatesTable)
+    .where(eq(updatesTable.initiativeId, idNum))
+    .orderBy(desc(updatesTable.createdAt));
+
+  res.json(
+    updates.map((u) => ({
+      id: u.id,
+      title: u.title,
+      content: u.content,
+      imageUrl: u.imageUrl ?? null,
+      createdAt: u.createdAt.toISOString(),
+    }))
+  );
+});
+
+router.post("/:id/updates", async (req, res) => {
+  const idNum = parseInt(req.params.id, 10);
+  if (isNaN(idNum)) {
+    res.status(400).json({ error: "Invalid ID" });
+    return;
+  }
+
+  const [initiative] = await db
+    .select()
+    .from(initiativesTable)
+    .where(eq(initiativesTable.id, idNum));
+
+  if (!initiative) {
+    res.status(404).json({ error: "Initiative not found" });
+    return;
+  }
+
+  const parsed = insertUpdateSchema.safeParse({
+    initiativeId: idNum,
+    title: req.body.title,
+    content: req.body.content,
+    imageUrl: req.body.imageUrl ?? null,
+  });
+
+  if (!parsed.success) {
+    res.status(400).json({ error: "Validation failed" });
+    return;
+  }
+
+  const [update] = await db.insert(updatesTable).values(parsed.data).returning();
+
+  res.status(201).json({
+    id: update.id,
+    title: update.title,
+    content: update.content,
+    imageUrl: update.imageUrl ?? null,
+    createdAt: update.createdAt.toISOString(),
+  });
+});
+
+router.get("/:id/suggested-volunteers", async (req, res) => {
+  const idNum = parseInt(req.params.id, 10);
+  if (isNaN(idNum)) {
+    res.status(400).json({ error: "Invalid ID" });
+    return;
+  }
+
+  const [initiative] = await db
+    .select()
+    .from(initiativesTable)
+    .where(eq(initiativesTable.id, idNum));
+
+  if (!initiative) {
+    res.status(404).json({ error: "Initiative not found" });
+    return;
+  }
+
+  const suggestions = getSuggestedVolunteers(initiative.category, initiative.title);
+  res.json(suggestions);
+});
 
 export default router;

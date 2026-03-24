@@ -6,6 +6,8 @@
  * OpenAPI spec version: 0.2.0
  */
 
-export interface HealthStatus {
-  status: string;
+export interface GeneratePlanInput {
+  /** @minLength 5 */
+  description: string;
+  category?: string;
 }

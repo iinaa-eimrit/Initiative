@@ -3,7 +3,7 @@
  * Do not edit manually.
  * Api
  * Initiative platform API
- * OpenAPI spec version: 0.1.0
+ * OpenAPI spec version: 0.2.0
  */
 
 export interface Volunteer {
@@ -11,5 +11,7 @@ export interface Volunteer {
   name: string;
   email: string;
   message?: string | null;
+  skills?: string | null;
+  matchedScore?: number | null;
   joinedAt: Date;
 }

@@ -3,19 +3,31 @@
  * Do not edit manually.
  * Api
  * Initiative platform API
- * OpenAPI spec version: 0.1.0
+ * OpenAPI spec version: 0.2.0
  */
 
 export * from "./createInitiativeInput";
+export * from "./createInitiativeInputLifecycleStage";
+export * from "./createInitiativeInputStructuredPlan";
+export * from "./createUpdateInput";
 export * from "./donation";
 export * from "./donationInput";
+export * from "./generatedPlan";
+export * from "./generatePlanInput";
 export * from "./healthStatus";
 export * from "./initiative";
 export * from "./initiativeDetail";
+export * from "./initiativeLifecycleStage";
 export * from "./initiativeStatus";
+export * from "./initiativeUpdate";
 export * from "./leaderboardEntry";
 export * from "./listInitiativesParams";
 export * from "./milestone";
 export * from "./milestoneStatus";
+export * from "./milestoneTimeline";
+export * from "./structuredPlan";
+export * from "./trustScore";
+export * from "./trustScoreBreakdown";
 export * from "./volunteer";
 export * from "./volunteerInput";
+export * from "./volunteerSuggestion";

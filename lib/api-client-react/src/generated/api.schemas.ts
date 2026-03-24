@@ -3,10 +3,37 @@
  * Do not edit manually.
  * Api
  * Initiative platform API
- * OpenAPI spec version: 0.1.0
+ * OpenAPI spec version: 0.2.0
  */
 export interface HealthStatus {
   status: string;
+}
+
+export interface MilestoneTimeline {
+  title: string;
+  description: string;
+  targetAmount: number;
+  durationWeeks: number;
+}
+
+export interface StructuredPlan {
+  problemStatement: string;
+  executionSteps: string[];
+  estimatedBudget: number;
+  suggestedRoles: string[];
+  milestonesTimeline: MilestoneTimeline[];
+}
+
+export type TrustScoreBreakdown = {
+  updatesScore: number;
+  milestonesScore: number;
+  volunteersScore: number;
+  fundingScore: number;
+};
+
+export interface TrustScore {
+  overall: number;
+  breakdown: TrustScoreBreakdown;
 }
 
 export type InitiativeStatus =
@@ -18,6 +45,16 @@ export const InitiativeStatus = {
   paused: "paused",
 } as const;
 
+export type InitiativeLifecycleStage =
+  (typeof InitiativeLifecycleStage)[keyof typeof InitiativeLifecycleStage];
+
+export const InitiativeLifecycleStage = {
+  idea: "idea",
+  planning: "planning",
+  active: "active",
+  impact_delivered: "impact_delivered",
+} as const;
+
 export interface Initiative {
   id: number;
   title: string;
@@ -25,12 +62,15 @@ export interface Initiative {
   category: string;
   location: string;
   status: InitiativeStatus;
+  lifecycleStage: InitiativeLifecycleStage;
   fundingGoal: number;
   fundingRaised: number;
   volunteerCount: number;
   createdAt: string;
   creatorName: string;
   imageUrl?: string | null;
+  structuredPlan?: StructuredPlan | null;
+  trustScore: TrustScore;
 }
 
 export type MilestoneStatus =
@@ -47,6 +87,7 @@ export interface Milestone {
   title: string;
   description: string;
   targetAmount: number;
+  fundsLocked: number;
   status: MilestoneStatus;
   order: number;
 }
@@ -56,6 +97,8 @@ export interface Volunteer {
   name: string;
   email: string;
   message?: string | null;
+  skills?: string | null;
+  matchedScore?: number | null;
   joinedAt: string;
 }
 
@@ -66,11 +109,28 @@ export interface LeaderboardEntry {
   donationCount: number;
 }
 
+export interface InitiativeUpdate {
+  id: number;
+  title: string;
+  content: string;
+  imageUrl?: string | null;
+  createdAt: string;
+}
+
 export type InitiativeDetail = Initiative & {
   milestones: Milestone[];
   volunteers: Volunteer[];
   topDonors: LeaderboardEntry[];
+  updates: InitiativeUpdate[];
 };
+
+export interface VolunteerSuggestion {
+  name: string;
+  skills: string[];
+  matchScore: number;
+  reason: string;
+  avatarInitials: string;
+}
 
 export interface Donation {
   id: number;
@@ -79,6 +139,20 @@ export interface Donation {
   message?: string | null;
   createdAt: string;
 }
+
+export type CreateInitiativeInputStructuredPlan = {
+  [key: string]: unknown;
+} | null;
+
+export type CreateInitiativeInputLifecycleStage =
+  (typeof CreateInitiativeInputLifecycleStage)[keyof typeof CreateInitiativeInputLifecycleStage];
+
+export const CreateInitiativeInputLifecycleStage = {
+  idea: "idea",
+  planning: "planning",
+  active: "active",
+  impact_delivered: "impact_delivered",
+} as const;
 
 export interface CreateInitiativeInput {
   /**
@@ -94,12 +168,15 @@ export interface CreateInitiativeInput {
   fundingGoal: number;
   creatorName: string;
   imageUrl?: string | null;
+  structuredPlan?: CreateInitiativeInputStructuredPlan;
+  lifecycleStage?: CreateInitiativeInputLifecycleStage;
 }
 
 export interface VolunteerInput {
   name: string;
   email: string;
   message?: string | null;
+  skills?: string | null;
 }
 
 export interface DonationInput {
@@ -107,6 +184,27 @@ export interface DonationInput {
   /** @minimum 1 */
   amount: number;
   message?: string | null;
+}
+
+export interface CreateUpdateInput {
+  title: string;
+  content: string;
+  imageUrl?: string | null;
+}
+
+export interface GeneratePlanInput {
+  /** @minLength 5 */
+  description: string;
+  category?: string;
+}
+
+export interface GeneratedPlan {
+  title: string;
+  description: string;
+  category: string;
+  location: string;
+  fundingGoal: number;
+  structuredPlan: StructuredPlan;
 }
 
 export type ListInitiativesParams = {

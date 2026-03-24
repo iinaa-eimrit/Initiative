@@ -6,9 +6,10 @@
  * OpenAPI spec version: 0.2.0
  */
 
-export interface VolunteerInput {
+export interface VolunteerSuggestion {
   name: string;
-  email: string;
-  message?: string | null;
-  skills?: string | null;
+  skills: string[];
+  matchScore: number;
+  reason: string;
+  avatarInitials: string;
 }

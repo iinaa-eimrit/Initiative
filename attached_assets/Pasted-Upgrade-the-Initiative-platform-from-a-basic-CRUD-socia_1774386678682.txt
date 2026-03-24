@@ -1,0 +1,212 @@
+Upgrade the Initiative platform from a basic CRUD social app into an AI-assisted social impact execution system.
+
+This is a hackathon MVP. Focus on visible intelligence, trust mechanisms, and emotional storytelling. Do NOT over-engineer.
+
+========================
+WEEK-1 CORE OBJECTIVES
+========================
+
+Implement the following major features:
+
+1️⃣ AI Initiative Structuring (CORE DIFFERENTIATOR)
+
+When a user creates an initiative using a simple text description (example: "Teach underprivileged kids math"):
+
+The system must automatically generate:
+
+- Structured mission title
+- Problem statement
+- Execution plan (step-by-step)
+- Estimated budget
+- Suggested volunteer roles
+- Milestones timeline
+
+For now:
+Use a mock AI generator (deterministic function or template logic).
+Design code so real LLM integration can be added later.
+
+Create:
+- aiService.ts (or similar)
+- generateInitiativeStructure(inputText)
+
+Store structured data in DB.
+
+UI:
+Show generated plan preview before publishing.
+
+This must feel intelligent.
+
+========================
+
+2️⃣ Milestone-Based Funding Visualization
+
+Each initiative must include:
+
+- Total budget
+- Milestones
+- Locked vs unlocked funding
+
+UI requirements:
+
+- Progress bar
+- Milestone cards
+- Visual locked/unlocked state
+- Funding percentage indicator
+
+No real payments needed.
+Use mock funding data.
+
+========================
+
+3️⃣ Impact Trust Score System
+
+Each initiative gets an "Impact Score".
+
+Score is calculated using:
+
+- Number of updates posted
+- Milestones completed
+- Volunteers joined
+
+Create:
+
+- trustScoreService.ts
+- Simple scoring formula
+
+Display:
+
+- Trust Score badge on initiative cards
+- Detailed trust breakdown on initiative page
+
+This must feel like GitHub contribution score.
+
+========================
+
+4️⃣ Impact Proof Feed
+
+Each initiative should have:
+
+- Timeline of updates
+- Update cards with:
+  - Title
+  - Description
+  - Image placeholder
+  - Date
+
+Create:
+
+- Add update model
+- Add update routes
+- Add UI timeline
+
+Use seed data for demo realism.
+
+========================
+
+5️⃣ Volunteer Match Suggestion (AI Perception Feature)
+
+On initiative detail page:
+
+Display:
+
+"Suggested volunteers"
+
+Use mock logic:
+
+Match based on:
+- Initiative category
+- User skill tags
+
+Show explanation:
+
+"You are a good fit because..."
+
+This must simulate AI reasoning.
+
+========================
+
+6️⃣ Initiative Lifecycle Visualization
+
+Add lifecycle stages:
+
+- Idea
+- Planning
+- Active
+- Impact Delivered
+
+UI:
+
+- Step progress tracker
+- Current stage highlighted
+
+========================
+
+7️⃣ UX + Visual Upgrade
+
+Improve overall design:
+
+- Modern SaaS look
+- Remove NGO aesthetics
+- Add emotional storytelling sections
+- Improve typography hierarchy
+- Add subtle animations (hover / transitions)
+
+========================
+
+TECHNICAL CONSTRAINTS
+
+- Do NOT introduce new services
+- Do NOT add Docker
+- Do NOT refactor entire architecture
+- Keep monolithic production server
+- Keep PostgreSQL schema simple
+- Maintain existing routes
+
+========================
+
+DATA REQUIREMENTS
+
+Add fields:
+
+Initiative:
+- structuredPlan
+- milestones
+- trustScore
+- lifecycleStage
+
+Update:
+- initiativeId
+- content
+- imageUrl
+- createdAt
+
+Volunteer:
+- skills
+- matchedScore
+
+Seed realistic demo initiatives:
+- Education
+- Environment
+- Healthcare
+
+========================
+
+OUTPUT EXPECTATION
+
+After implementation:
+
+- Show AI structured initiative creation flow
+- Show trust score on feed
+- Show milestone funding UI
+- Show update timeline
+- Show volunteer suggestions
+- Ensure app still deploys correctly
+
+Explain:
+
+- What new modules were added
+- How trust score works
+- How AI mock system works
+- How lifecycle works
+
+This is a hackathon MVP → prioritize visual intelligence and demo storytelling.

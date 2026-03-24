@@ -3,7 +3,7 @@
  * Do not edit manually.
  * Api
  * Initiative platform API
- * OpenAPI spec version: 0.1.0
+ * OpenAPI spec version: 0.2.0
  */
 import { useMutation, useQuery } from "@tanstack/react-query";
 import type {
@@ -18,15 +18,20 @@ import type {
 
 import type {
   CreateInitiativeInput,
+  CreateUpdateInput,
   Donation,
   DonationInput,
+  GeneratePlanInput,
+  GeneratedPlan,
   HealthStatus,
   Initiative,
   InitiativeDetail,
+  InitiativeUpdate,
   LeaderboardEntry,
   ListInitiativesParams,
   Volunteer,
   VolunteerInput,
+  VolunteerSuggestion,
 } from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
@@ -39,7 +44,6 @@ type Awaited<O> = O extends AwaitedInput<infer T> ? T : never;
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 /**
- * Returns server health status
  * @summary Health check
  */
 export const getHealthCheckUrl = () => {
@@ -228,7 +232,7 @@ export const createInitiative = async (
 };
 
 export const getCreateInitiativeMutationOptions = <
-  TError = ErrorType<void>,
+  TError = ErrorType<unknown>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -269,13 +273,13 @@ export type CreateInitiativeMutationResult = NonNullable<
   Awaited<ReturnType<typeof createInitiative>>
 >;
 export type CreateInitiativeMutationBody = BodyType<CreateInitiativeInput>;
-export type CreateInitiativeMutationError = ErrorType<void>;
+export type CreateInitiativeMutationError = ErrorType<unknown>;
 
 /**
  * @summary Create a new initiative
  */
 export const useCreateInitiative = <
-  TError = ErrorType<void>,
+  TError = ErrorType<unknown>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -295,7 +299,7 @@ export const useCreateInitiative = <
 };
 
 /**
- * @summary Get a single initiative
+ * @summary Get a single initiative with full detail
  */
 export const getGetInitiativeUrl = (id: number) => {
   return `/api/initiatives/${id}`;
@@ -355,7 +359,7 @@ export type GetInitiativeQueryResult = NonNullable<
 export type GetInitiativeQueryError = ErrorType<void>;
 
 /**
- * @summary Get a single initiative
+ * @summary Get a single initiative with full detail
  */
 
 export function useGetInitiative<
@@ -402,7 +406,7 @@ export const volunteerForInitiative = async (
 };
 
 export const getVolunteerForInitiativeMutationOptions = <
-  TError = ErrorType<void>,
+  TError = ErrorType<unknown>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -443,13 +447,13 @@ export type VolunteerForInitiativeMutationResult = NonNullable<
   Awaited<ReturnType<typeof volunteerForInitiative>>
 >;
 export type VolunteerForInitiativeMutationBody = BodyType<VolunteerInput>;
-export type VolunteerForInitiativeMutationError = ErrorType<void>;
+export type VolunteerForInitiativeMutationError = ErrorType<unknown>;
 
 /**
  * @summary Volunteer for an initiative
  */
 export const useVolunteerForInitiative = <
-  TError = ErrorType<void>,
+  TError = ErrorType<unknown>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -489,7 +493,7 @@ export const donateToInitiative = async (
 };
 
 export const getDonateToInitiativeMutationOptions = <
-  TError = ErrorType<void>,
+  TError = ErrorType<unknown>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -530,13 +534,13 @@ export type DonateToInitiativeMutationResult = NonNullable<
   Awaited<ReturnType<typeof donateToInitiative>>
 >;
 export type DonateToInitiativeMutationBody = BodyType<DonationInput>;
-export type DonateToInitiativeMutationError = ErrorType<void>;
+export type DonateToInitiativeMutationError = ErrorType<unknown>;
 
 /**
  * @summary Donate to an initiative
  */
 export const useDonateToInitiative = <
-  TError = ErrorType<void>,
+  TError = ErrorType<unknown>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
@@ -556,7 +560,7 @@ export const useDonateToInitiative = <
 };
 
 /**
- * @summary Get donor leaderboard for an initiative
+ * @summary Get donor leaderboard
  */
 export const getGetLeaderboardUrl = (id: number) => {
   return `/api/initiatives/${id}/leaderboard`;
@@ -616,7 +620,7 @@ export type GetLeaderboardQueryResult = NonNullable<
 export type GetLeaderboardQueryError = ErrorType<unknown>;
 
 /**
- * @summary Get donor leaderboard for an initiative
+ * @summary Get donor leaderboard
  */
 
 export function useGetLeaderboard<
@@ -641,3 +645,352 @@ export function useGetLeaderboard<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * @summary Get updates timeline for an initiative
+ */
+export const getGetInitiativeUpdatesUrl = (id: number) => {
+  return `/api/initiatives/${id}/updates`;
+};
+
+export const getInitiativeUpdates = async (
+  id: number,
+  options?: RequestInit,
+): Promise<InitiativeUpdate[]> => {
+  return customFetch<InitiativeUpdate[]>(getGetInitiativeUpdatesUrl(id), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetInitiativeUpdatesQueryKey = (id: number) => {
+  return [`/api/initiatives/${id}/updates`] as const;
+};
+
+export const getGetInitiativeUpdatesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getInitiativeUpdates>>,
+  TError = ErrorType<unknown>,
+>(
+  id: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getInitiativeUpdates>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetInitiativeUpdatesQueryKey(id);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getInitiativeUpdates>>
+  > = ({ signal }) => getInitiativeUpdates(id, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getInitiativeUpdates>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetInitiativeUpdatesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getInitiativeUpdates>>
+>;
+export type GetInitiativeUpdatesQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get updates timeline for an initiative
+ */
+
+export function useGetInitiativeUpdates<
+  TData = Awaited<ReturnType<typeof getInitiativeUpdates>>,
+  TError = ErrorType<unknown>,
+>(
+  id: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getInitiativeUpdates>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetInitiativeUpdatesQueryOptions(id, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Post an update for an initiative
+ */
+export const getCreateInitiativeUpdateUrl = (id: number) => {
+  return `/api/initiatives/${id}/updates`;
+};
+
+export const createInitiativeUpdate = async (
+  id: number,
+  createUpdateInput: CreateUpdateInput,
+  options?: RequestInit,
+): Promise<InitiativeUpdate> => {
+  return customFetch<InitiativeUpdate>(getCreateInitiativeUpdateUrl(id), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(createUpdateInput),
+  });
+};
+
+export const getCreateInitiativeUpdateMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createInitiativeUpdate>>,
+    TError,
+    { id: number; data: BodyType<CreateUpdateInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createInitiativeUpdate>>,
+  TError,
+  { id: number; data: BodyType<CreateUpdateInput> },
+  TContext
+> => {
+  const mutationKey = ["createInitiativeUpdate"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createInitiativeUpdate>>,
+    { id: number; data: BodyType<CreateUpdateInput> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return createInitiativeUpdate(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateInitiativeUpdateMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createInitiativeUpdate>>
+>;
+export type CreateInitiativeUpdateMutationBody = BodyType<CreateUpdateInput>;
+export type CreateInitiativeUpdateMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Post an update for an initiative
+ */
+export const useCreateInitiativeUpdate = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createInitiativeUpdate>>,
+    TError,
+    { id: number; data: BodyType<CreateUpdateInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof createInitiativeUpdate>>,
+  TError,
+  { id: number; data: BodyType<CreateUpdateInput> },
+  TContext
+> => {
+  return useMutation(getCreateInitiativeUpdateMutationOptions(options));
+};
+
+/**
+ * @summary Get AI-suggested volunteers for an initiative
+ */
+export const getGetSuggestedVolunteersUrl = (id: number) => {
+  return `/api/initiatives/${id}/suggested-volunteers`;
+};
+
+export const getSuggestedVolunteers = async (
+  id: number,
+  options?: RequestInit,
+): Promise<VolunteerSuggestion[]> => {
+  return customFetch<VolunteerSuggestion[]>(getGetSuggestedVolunteersUrl(id), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetSuggestedVolunteersQueryKey = (id: number) => {
+  return [`/api/initiatives/${id}/suggested-volunteers`] as const;
+};
+
+export const getGetSuggestedVolunteersQueryOptions = <
+  TData = Awaited<ReturnType<typeof getSuggestedVolunteers>>,
+  TError = ErrorType<unknown>,
+>(
+  id: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getSuggestedVolunteers>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetSuggestedVolunteersQueryKey(id);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getSuggestedVolunteers>>
+  > = ({ signal }) => getSuggestedVolunteers(id, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getSuggestedVolunteers>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetSuggestedVolunteersQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getSuggestedVolunteers>>
+>;
+export type GetSuggestedVolunteersQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get AI-suggested volunteers for an initiative
+ */
+
+export function useGetSuggestedVolunteers<
+  TData = Awaited<ReturnType<typeof getSuggestedVolunteers>>,
+  TError = ErrorType<unknown>,
+>(
+  id: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getSuggestedVolunteers>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetSuggestedVolunteersQueryOptions(id, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary AI-generate a structured initiative plan from a description
+ */
+export const getGenerateInitiativePlanUrl = () => {
+  return `/api/ai/generate-plan`;
+};
+
+export const generateInitiativePlan = async (
+  generatePlanInput: GeneratePlanInput,
+  options?: RequestInit,
+): Promise<GeneratedPlan> => {
+  return customFetch<GeneratedPlan>(getGenerateInitiativePlanUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(generatePlanInput),
+  });
+};
+
+export const getGenerateInitiativePlanMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof generateInitiativePlan>>,
+    TError,
+    { data: BodyType<GeneratePlanInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof generateInitiativePlan>>,
+  TError,
+  { data: BodyType<GeneratePlanInput> },
+  TContext
+> => {
+  const mutationKey = ["generateInitiativePlan"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof generateInitiativePlan>>,
+    { data: BodyType<GeneratePlanInput> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return generateInitiativePlan(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type GenerateInitiativePlanMutationResult = NonNullable<
+  Awaited<ReturnType<typeof generateInitiativePlan>>
+>;
+export type GenerateInitiativePlanMutationBody = BodyType<GeneratePlanInput>;
+export type GenerateInitiativePlanMutationError = ErrorType<unknown>;
+
+/**
+ * @summary AI-generate a structured initiative plan from a description
+ */
+export const useGenerateInitiativePlan = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof generateInitiativePlan>>,
+    TError,
+    { data: BodyType<GeneratePlanInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof generateInitiativePlan>>,
+  TError,
+  { data: BodyType<GeneratePlanInput> },
+  TContext
+> => {
+  return useMutation(getGenerateInitiativePlanMutationOptions(options));
+};

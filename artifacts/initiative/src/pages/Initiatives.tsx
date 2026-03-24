@@ -1,15 +1,25 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { Search, MapPin, Users, Heart } from "lucide-react";
+import { Search, MapPin, Users, Heart, Shield, Sparkles } from "lucide-react";
 import { useListInitiatives } from "@workspace/api-client-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { TrustScoreBadge } from "@/components/TrustScoreBadge";
+import { LifecycleBadge } from "@/components/LifecycleBadge";
 
-const CATEGORIES = ["All", "Environment", "Education", "Health", "Community", "Food", "Technology", "Other"];
+const CATEGORIES = ["All", "environment", "education", "healthcare", "community"];
+
+const categoryLabels: Record<string, string> = {
+  All: "All",
+  environment: "Environment",
+  education: "Education",
+  healthcare: "Healthcare",
+  community: "Community",
+};
 
 export default function Initiatives() {
   const [search, setSearch] = useState("");
@@ -29,17 +39,16 @@ export default function Initiatives() {
           <div>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">Discover Initiatives</h1>
             <p className="text-lg text-muted-foreground max-w-2xl">
-              Support real people solving real problems. Find campaigns that match your passion.
+              Support real people solving real problems. Trust scores show you who's delivering.
             </p>
           </div>
           <Link href="/initiatives/new">
             <Button size="lg" className="rounded-full shadow-lg shadow-primary/20">
-              Start an Initiative
+              <Sparkles className="w-4 h-4 mr-2" /> Start with AI
             </Button>
           </Link>
         </div>
 
-        {/* Filters */}
         <div className="bg-white p-4 rounded-2xl shadow-sm border border-border/60 mb-10 flex flex-col md:flex-row gap-4">
           <div className="relative flex-grow">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -61,17 +70,16 @@ export default function Initiatives() {
                     : "bg-muted/50 text-muted-foreground hover:bg-muted"
                 }`}
               >
-                {c}
+                {categoryLabels[c] || c}
               </button>
             ))}
           </div>
         </div>
 
-        {/* List */}
         {isLoading ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1, 2, 3, 4, 5, 6].map(i => (
-              <Card key={i} className="animate-pulse h-[400px] bg-muted/20 border-transparent rounded-3xl" />
+              <Card key={i} className="animate-pulse h-[420px] bg-muted/20 border-transparent rounded-3xl" />
             ))}
           </div>
         ) : error ? (
@@ -98,45 +106,37 @@ export default function Initiatives() {
               >
                 <Link href={`/initiatives/${initiative.id}`} className="block h-full">
                   <Card className="h-full flex flex-col rounded-3xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border-border/50 group bg-white">
-                    <div className="h-48 relative overflow-hidden bg-muted">
-                      {initiative.imageUrl ? (
-                        <img 
-                          src={initiative.imageUrl} 
-                          alt={initiative.title} 
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      ) : (
-                        /* Unsplash placeholder for initiatives without images */
-                        <img 
-                          src={`https://images.unsplash.com/photo-1593113589914-075568e09411?w=800&q=80`}
-                          alt="Community placeholder" 
-                          className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-500"
-                        />
-                      )}
-                      <div className="absolute top-4 left-4">
-                        <Badge className="bg-white/90 text-foreground hover:bg-white backdrop-blur-md font-semibold border-none">
-                          {initiative.category}
-                        </Badge>
-                      </div>
-                      <div className="absolute top-4 right-4">
-                        <Badge variant={initiative.status === 'active' ? 'default' : 'secondary'} className="shadow-sm">
-                          {initiative.status}
-                        </Badge>
-                      </div>
-                    </div>
+                    <div className="h-3 w-full" style={{
+                      background: initiative.lifecycleStage === 'impact_delivered' 
+                        ? 'linear-gradient(90deg, #10b981, #34d399)' 
+                        : initiative.lifecycleStage === 'active'
+                        ? 'linear-gradient(90deg, #3b82f6, #60a5fa)'
+                        : initiative.lifecycleStage === 'planning'
+                        ? 'linear-gradient(90deg, #f59e0b, #fbbf24)'
+                        : 'linear-gradient(90deg, #8b5cf6, #a78bfa)'
+                    }}></div>
                     
-                    <CardHeader className="pt-6 pb-2">
-                      <h3 className="text-xl font-bold line-clamp-1 group-hover:text-primary transition-colors">
+                    <CardHeader className="pt-5 pb-2">
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <div className="flex gap-2 flex-wrap">
+                          <Badge className="bg-muted text-foreground hover:bg-muted font-medium border-none text-xs">
+                            {initiative.category}
+                          </Badge>
+                          <LifecycleBadge stage={initiative.lifecycleStage} />
+                        </div>
+                        <TrustScoreBadge score={initiative.trustScore?.overall ?? 0} size="sm" />
+                      </div>
+                      <h3 className="text-lg font-bold line-clamp-2 group-hover:text-primary transition-colors leading-tight">
                         {initiative.title}
                       </h3>
                       <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-2">
-                        <MapPin className="w-4 h-4" />
-                        <span className="truncate">{initiative.location}</span>
+                        <MapPin className="w-3.5 h-3.5" />
+                        <span className="truncate text-xs">{initiative.location}</span>
                       </div>
                     </CardHeader>
 
                     <CardContent className="flex-grow">
-                      <p className="text-muted-foreground text-sm line-clamp-2 mb-6">
+                      <p className="text-muted-foreground text-sm line-clamp-2 mb-5">
                         {initiative.description}
                       </p>
                       
@@ -147,21 +147,21 @@ export default function Initiatives() {
                         </div>
                         <Progress 
                           value={Math.min((initiative.fundingRaised / initiative.fundingGoal) * 100, 100)} 
-                          className="h-2.5 bg-primary/10"
+                          className="h-2 bg-primary/10"
                           indicatorClassName="bg-primary"
                         />
                       </div>
                     </CardContent>
 
-                    <CardFooter className="border-t border-border/50 pt-4 pb-5 flex justify-between items-center bg-muted/10">
+                    <CardFooter className="border-t border-border/50 pt-4 pb-4 flex justify-between items-center bg-muted/10">
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <div className="w-8 h-8 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center font-bold text-xs uppercase">
+                        <div className="w-7 h-7 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center font-bold text-[10px] uppercase">
                           {initiative.creatorName.charAt(0)}
                         </div>
-                        <span className="truncate max-w-[100px]">{initiative.creatorName}</span>
+                        <span className="truncate max-w-[100px] text-xs">{initiative.creatorName}</span>
                       </div>
-                      <div className="flex items-center gap-1.5 text-sm font-medium text-foreground bg-white px-3 py-1 rounded-full border border-border/50 shadow-sm">
-                        <Users className="w-4 h-4 text-accent" />
+                      <div className="flex items-center gap-1.5 text-xs font-medium text-foreground bg-white px-2.5 py-1 rounded-full border border-border/50 shadow-sm">
+                        <Users className="w-3.5 h-3.5 text-accent" />
                         {initiative.volunteerCount}
                       </div>
                     </CardFooter>

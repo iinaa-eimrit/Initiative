@@ -3,9 +3,10 @@
  * Do not edit manually.
  * Api
  * Initiative platform API
- * OpenAPI spec version: 0.1.0
+ * OpenAPI spec version: 0.2.0
  */
 import type { Initiative } from "./initiative";
+import type { InitiativeUpdate } from "./initiativeUpdate";
 import type { LeaderboardEntry } from "./leaderboardEntry";
 import type { Milestone } from "./milestone";
 import type { Volunteer } from "./volunteer";
@@ -14,4 +15,5 @@ export type InitiativeDetail = Initiative & {
   milestones: Milestone[];
   volunteers: Volunteer[];
   topDonors: LeaderboardEntry[];
+  updates: InitiativeUpdate[];
 };

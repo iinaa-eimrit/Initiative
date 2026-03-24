@@ -1,9 +1,10 @@
-import { pgTable, serial, text, real, integer, timestamp, pgEnum } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, real, integer, timestamp, pgEnum, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
 export const initiativeStatusEnum = pgEnum("initiative_status", ["active", "completed", "paused"]);
 export const milestoneStatusEnum = pgEnum("milestone_status", ["pending", "active", "completed"]);
+export const lifecycleStageEnum = pgEnum("lifecycle_stage", ["idea", "planning", "active", "impact_delivered"]);
 
 export const initiativesTable = pgTable("initiatives", {
   id: serial("id").primaryKey(),
@@ -12,11 +13,13 @@ export const initiativesTable = pgTable("initiatives", {
   category: text("category").notNull(),
   location: text("location").notNull(),
   status: initiativeStatusEnum("status").notNull().default("active"),
+  lifecycleStage: lifecycleStageEnum("lifecycle_stage").notNull().default("idea"),
   fundingGoal: real("funding_goal").notNull().default(0),
   fundingRaised: real("funding_raised").notNull().default(0),
   volunteerCount: integer("volunteer_count").notNull().default(0),
   creatorName: text("creator_name").notNull(),
   imageUrl: text("image_url"),
+  structuredPlan: jsonb("structured_plan"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -39,6 +42,7 @@ export const milestonesTable = pgTable("milestones", {
   targetAmount: real("target_amount").notNull().default(0),
   status: milestoneStatusEnum("status").notNull().default("pending"),
   order: integer("order").notNull().default(0),
+  fundsLocked: real("funds_locked").notNull().default(0),
 });
 
 export const insertMilestoneSchema = createInsertSchema(milestonesTable).omit({ id: true });
@@ -51,6 +55,8 @@ export const volunteersTable = pgTable("volunteers", {
   name: text("name").notNull(),
   email: text("email").notNull(),
   message: text("message"),
+  skills: text("skills"),
+  matchedScore: real("matched_score"),
   joinedAt: timestamp("joined_at").notNull().defaultNow(),
 });
 
@@ -70,3 +76,16 @@ export const donationsTable = pgTable("donations", {
 export const insertDonationSchema = createInsertSchema(donationsTable).omit({ id: true, createdAt: true });
 export type Donation = typeof donationsTable.$inferSelect;
 export type InsertDonation = z.infer<typeof insertDonationSchema>;
+
+export const updatesTable = pgTable("updates", {
+  id: serial("id").primaryKey(),
+  initiativeId: integer("initiative_id").notNull().references(() => initiativesTable.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  imageUrl: text("image_url"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertUpdateSchema = createInsertSchema(updatesTable).omit({ id: true, createdAt: true });
+export type Update = typeof updatesTable.$inferSelect;
+export type InsertUpdate = z.infer<typeof insertUpdateSchema>;

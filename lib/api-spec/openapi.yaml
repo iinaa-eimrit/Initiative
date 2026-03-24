@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Api
-  version: 0.1.0
+  version: 0.2.0
   description: Initiative platform API
 servers:
   - url: /api
@@ -15,13 +15,16 @@ tags:
     description: Volunteer operations
   - name: donations
     description: Donation operations
+  - name: updates
+    description: Initiative update operations
+  - name: ai
+    description: AI services
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -74,14 +77,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Initiative"
-        "400":
-          description: Validation error
 
   /initiatives/{id}:
     get:
       operationId: getInitiative
       tags: [initiatives]
-      summary: Get a single initiative
+      summary: Get a single initiative with full detail
       parameters:
         - name: id
           in: path
@@ -122,8 +123,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Volunteer"
-        "400":
-          description: Validation error
 
   /initiatives/{id}/donate:
     post:
@@ -149,14 +148,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Donation"
-        "400":
-          description: Validation error
 
   /initiatives/{id}/leaderboard:
     get:
       operationId: getLeaderboard
       tags: [donations]
-      summary: Get donor leaderboard for an initiative
+      summary: Get donor leaderboard
       parameters:
         - name: id
           in: path
@@ -173,6 +170,90 @@ paths:
                 items:
                   $ref: "#/components/schemas/LeaderboardEntry"
 
+  /initiatives/{id}/updates:
+    get:
+      operationId: getInitiativeUpdates
+      tags: [updates]
+      summary: Get updates timeline for an initiative
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of updates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/InitiativeUpdate"
+    post:
+      operationId: createInitiativeUpdate
+      tags: [updates]
+      summary: Post an update for an initiative
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUpdateInput"
+      responses:
+        "201":
+          description: Update created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InitiativeUpdate"
+
+  /initiatives/{id}/suggested-volunteers:
+    get:
+      operationId: getSuggestedVolunteers
+      tags: [volunteers]
+      summary: Get AI-suggested volunteers for an initiative
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Suggested volunteer matches
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/VolunteerSuggestion"
+
+  /ai/generate-plan:
+    post:
+      operationId: generateInitiativePlan
+      tags: [ai]
+      summary: AI-generate a structured initiative plan from a description
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GeneratePlanInput"
+      responses:
+        "200":
+          description: Generated initiative structure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GeneratedPlan"
+
 components:
   schemas:
     HealthStatus:
@@ -182,6 +263,74 @@ components:
           type: string
       required:
         - status
+
+    StructuredPlan:
+      type: object
+      properties:
+        problemStatement:
+          type: string
+        executionSteps:
+          type: array
+          items:
+            type: string
+        estimatedBudget:
+          type: number
+        suggestedRoles:
+          type: array
+          items:
+            type: string
+        milestonesTimeline:
+          type: array
+          items:
+            $ref: "#/components/schemas/MilestoneTimeline"
+      required:
+        - problemStatement
+        - executionSteps
+        - estimatedBudget
+        - suggestedRoles
+        - milestonesTimeline
+
+    MilestoneTimeline:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        targetAmount:
+          type: number
+        durationWeeks:
+          type: integer
+      required:
+        - title
+        - description
+        - targetAmount
+        - durationWeeks
+
+    TrustScore:
+      type: object
+      properties:
+        overall:
+          type: integer
+        breakdown:
+          type: object
+          properties:
+            updatesScore:
+              type: integer
+            milestonesScore:
+              type: integer
+            volunteersScore:
+              type: integer
+            fundingScore:
+              type: integer
+          required:
+            - updatesScore
+            - milestonesScore
+            - volunteersScore
+            - fundingScore
+      required:
+        - overall
+        - breakdown
 
     Initiative:
       type: object
@@ -199,6 +348,9 @@ components:
         status:
           type: string
           enum: [active, completed, paused]
+        lifecycleStage:
+          type: string
+          enum: [idea, planning, active, impact_delivered]
         fundingGoal:
           type: number
         fundingRaised:
@@ -213,6 +365,11 @@ components:
         imageUrl:
           type: string
           nullable: true
+        structuredPlan:
+          $ref: "#/components/schemas/StructuredPlan"
+          nullable: true
+        trustScore:
+          $ref: "#/components/schemas/TrustScore"
       required:
         - id
         - title
@@ -220,11 +377,13 @@ components:
         - category
         - location
         - status
+        - lifecycleStage
         - fundingGoal
         - fundingRaised
         - volunteerCount
         - createdAt
         - creatorName
+        - trustScore
 
     InitiativeDetail:
       allOf:
@@ -243,10 +402,15 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/LeaderboardEntry"
+            updates:
+              type: array
+              items:
+                $ref: "#/components/schemas/InitiativeUpdate"
           required:
             - milestones
             - volunteers
             - topDonors
+            - updates
 
     Milestone:
       type: object
@@ -259,6 +423,8 @@ components:
           type: string
         targetAmount:
           type: number
+        fundsLocked:
+          type: number
         status:
           type: string
           enum: [pending, active, completed]
@@ -269,6 +435,7 @@ components:
         - title
         - description
         - targetAmount
+        - fundsLocked
         - status
         - order
 
@@ -284,6 +451,12 @@ components:
         message:
           type: string
           nullable: true
+        skills:
+          type: string
+          nullable: true
+        matchedScore:
+          type: number
+          nullable: true
         joinedAt:
           type: string
           format: date-time
@@ -292,6 +465,28 @@ components:
         - name
         - email
         - joinedAt
+
+    VolunteerSuggestion:
+      type: object
+      properties:
+        name:
+          type: string
+        skills:
+          type: array
+          items:
+            type: string
+        matchScore:
+          type: integer
+        reason:
+          type: string
+        avatarInitials:
+          type: string
+      required:
+        - name
+        - skills
+        - matchScore
+        - reason
+        - avatarInitials
 
     Donation:
       type: object
@@ -331,6 +526,27 @@ components:
         - totalAmount
         - donationCount
 
+    InitiativeUpdate:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+        imageUrl:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - title
+        - content
+        - createdAt
+
     CreateInitiativeInput:
       type: object
       properties:
@@ -353,6 +569,12 @@ components:
         imageUrl:
           type: string
           nullable: true
+        structuredPlan:
+          type: object
+          nullable: true
+        lifecycleStage:
+          type: string
+          enum: [idea, planning, active, impact_delivered]
       required:
         - title
         - description
@@ -370,6 +592,9 @@ components:
           type: string
           format: email
         message:
+          type: string
+          nullable: true
+        skills:
           type: string
           nullable: true
       required:
@@ -390,3 +615,51 @@ components:
       required:
         - donorName
         - amount
+
+    CreateUpdateInput:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+        imageUrl:
+          type: string
+          nullable: true
+      required:
+        - title
+        - content
+
+    GeneratePlanInput:
+      type: object
+      properties:
+        description:
+          type: string
+          minLength: 5
+        category:
+          type: string
+      required:
+        - description
+
+    GeneratedPlan:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        category:
+          type: string
+        location:
+          type: string
+        fundingGoal:
+          type: number
+        structuredPlan:
+          $ref: "#/components/schemas/StructuredPlan"
+      required:
+        - title
+        - description
+        - category
+        - location
+        - fundingGoal
+        - structuredPlan

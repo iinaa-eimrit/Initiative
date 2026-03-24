@@ -6,6 +6,10 @@
  * OpenAPI spec version: 0.2.0
  */
 
-export interface HealthStatus {
-  status: string;
+export interface InitiativeUpdate {
+  id: number;
+  title: string;
+  content: string;
+  imageUrl?: string | null;
+  createdAt: Date;
 }

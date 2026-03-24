@@ -3,9 +3,12 @@
  * Do not edit manually.
  * Api
  * Initiative platform API
- * OpenAPI spec version: 0.1.0
+ * OpenAPI spec version: 0.2.0
  */
+import type { InitiativeLifecycleStage } from "./initiativeLifecycleStage";
 import type { InitiativeStatus } from "./initiativeStatus";
+import type { StructuredPlan } from "./structuredPlan";
+import type { TrustScore } from "./trustScore";
 
 export interface Initiative {
   id: number;
@@ -14,10 +17,13 @@ export interface Initiative {
   category: string;
   location: string;
   status: InitiativeStatus;
+  lifecycleStage: InitiativeLifecycleStage;
   fundingGoal: number;
   fundingRaised: number;
   volunteerCount: number;
   createdAt: Date;
   creatorName: string;
   imageUrl?: string | null;
+  structuredPlan?: StructuredPlan | null;
+  trustScore: TrustScore;
 }

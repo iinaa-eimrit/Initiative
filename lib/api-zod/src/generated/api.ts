@@ -3,12 +3,11 @@
  * Do not edit manually.
  * Api
  * Initiative platform API
- * OpenAPI spec version: 0.1.0
+ * OpenAPI spec version: 0.2.0
  */
 import * as zod from "zod";
 
 /**
- * Returns server health status
  * @summary Health check
  */
 export const HealthCheckResponse = zod.object({
@@ -31,12 +30,38 @@ export const ListInitiativesResponseItem = zod.object({
   category: zod.string(),
   location: zod.string(),
   status: zod.enum(["active", "completed", "paused"]),
+  lifecycleStage: zod.enum(["idea", "planning", "active", "impact_delivered"]),
   fundingGoal: zod.number(),
   fundingRaised: zod.number(),
   volunteerCount: zod.number(),
   createdAt: zod.date(),
   creatorName: zod.string(),
   imageUrl: zod.string().nullish(),
+  structuredPlan: zod
+    .object({
+      problemStatement: zod.string(),
+      executionSteps: zod.array(zod.string()),
+      estimatedBudget: zod.number(),
+      suggestedRoles: zod.array(zod.string()),
+      milestonesTimeline: zod.array(
+        zod.object({
+          title: zod.string(),
+          description: zod.string(),
+          targetAmount: zod.number(),
+          durationWeeks: zod.number(),
+        }),
+      ),
+    })
+    .nullish(),
+  trustScore: zod.object({
+    overall: zod.number(),
+    breakdown: zod.object({
+      updatesScore: zod.number(),
+      milestonesScore: zod.number(),
+      volunteersScore: zod.number(),
+      fundingScore: zod.number(),
+    }),
+  }),
 });
 export const ListInitiativesResponse = zod.array(ListInitiativesResponseItem);
 
@@ -61,10 +86,14 @@ export const CreateInitiativeBody = zod.object({
   fundingGoal: zod.number().min(createInitiativeBodyFundingGoalMin),
   creatorName: zod.string(),
   imageUrl: zod.string().nullish(),
+  structuredPlan: zod.object({}).passthrough().nullish(),
+  lifecycleStage: zod
+    .enum(["idea", "planning", "active", "impact_delivered"])
+    .optional(),
 });
 
 /**
- * @summary Get a single initiative
+ * @summary Get a single initiative with full detail
  */
 export const GetInitiativeParams = zod.object({
   id: zod.coerce.number(),
@@ -78,12 +107,43 @@ export const GetInitiativeResponse = zod
     category: zod.string(),
     location: zod.string(),
     status: zod.enum(["active", "completed", "paused"]),
+    lifecycleStage: zod.enum([
+      "idea",
+      "planning",
+      "active",
+      "impact_delivered",
+    ]),
     fundingGoal: zod.number(),
     fundingRaised: zod.number(),
     volunteerCount: zod.number(),
     createdAt: zod.date(),
     creatorName: zod.string(),
     imageUrl: zod.string().nullish(),
+    structuredPlan: zod
+      .object({
+        problemStatement: zod.string(),
+        executionSteps: zod.array(zod.string()),
+        estimatedBudget: zod.number(),
+        suggestedRoles: zod.array(zod.string()),
+        milestonesTimeline: zod.array(
+          zod.object({
+            title: zod.string(),
+            description: zod.string(),
+            targetAmount: zod.number(),
+            durationWeeks: zod.number(),
+          }),
+        ),
+      })
+      .nullish(),
+    trustScore: zod.object({
+      overall: zod.number(),
+      breakdown: zod.object({
+        updatesScore: zod.number(),
+        milestonesScore: zod.number(),
+        volunteersScore: zod.number(),
+        fundingScore: zod.number(),
+      }),
+    }),
   })
   .and(
     zod.object({
@@ -93,6 +153,7 @@ export const GetInitiativeResponse = zod
           title: zod.string(),
           description: zod.string(),
           targetAmount: zod.number(),
+          fundsLocked: zod.number(),
           status: zod.enum(["pending", "active", "completed"]),
           order: zod.number(),
         }),
@@ -103,6 +164,8 @@ export const GetInitiativeResponse = zod
           name: zod.string(),
           email: zod.string(),
           message: zod.string().nullish(),
+          skills: zod.string().nullish(),
+          matchedScore: zod.number().nullish(),
           joinedAt: zod.date(),
         }),
       ),
@@ -112,6 +175,15 @@ export const GetInitiativeResponse = zod
           donorName: zod.string(),
           totalAmount: zod.number(),
           donationCount: zod.number(),
+        }),
+      ),
+      updates: zod.array(
+        zod.object({
+          id: zod.number(),
+          title: zod.string(),
+          content: zod.string(),
+          imageUrl: zod.string().nullish(),
+          createdAt: zod.date(),
         }),
       ),
     }),
@@ -128,6 +200,7 @@ export const VolunteerForInitiativeBody = zod.object({
   name: zod.string(),
   email: zod.string().email(),
   message: zod.string().nullish(),
+  skills: zod.string().nullish(),
 });
 
 /**
@@ -144,7 +217,7 @@ export const DonateToInitiativeBody = zod.object({
 });
 
 /**
- * @summary Get donor leaderboard for an initiative
+ * @summary Get donor leaderboard
  */
 export const GetLeaderboardParams = zod.object({
   id: zod.coerce.number(),
@@ -157,3 +230,84 @@ export const GetLeaderboardResponseItem = zod.object({
   donationCount: zod.number(),
 });
 export const GetLeaderboardResponse = zod.array(GetLeaderboardResponseItem);
+
+/**
+ * @summary Get updates timeline for an initiative
+ */
+export const GetInitiativeUpdatesParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const GetInitiativeUpdatesResponseItem = zod.object({
+  id: zod.number(),
+  title: zod.string(),
+  content: zod.string(),
+  imageUrl: zod.string().nullish(),
+  createdAt: zod.date(),
+});
+export const GetInitiativeUpdatesResponse = zod.array(
+  GetInitiativeUpdatesResponseItem,
+);
+
+/**
+ * @summary Post an update for an initiative
+ */
+export const CreateInitiativeUpdateParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const CreateInitiativeUpdateBody = zod.object({
+  title: zod.string(),
+  content: zod.string(),
+  imageUrl: zod.string().nullish(),
+});
+
+/**
+ * @summary Get AI-suggested volunteers for an initiative
+ */
+export const GetSuggestedVolunteersParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const GetSuggestedVolunteersResponseItem = zod.object({
+  name: zod.string(),
+  skills: zod.array(zod.string()),
+  matchScore: zod.number(),
+  reason: zod.string(),
+  avatarInitials: zod.string(),
+});
+export const GetSuggestedVolunteersResponse = zod.array(
+  GetSuggestedVolunteersResponseItem,
+);
+
+/**
+ * @summary AI-generate a structured initiative plan from a description
+ */
+export const generateInitiativePlanBodyDescriptionMin = 5;
+
+export const GenerateInitiativePlanBody = zod.object({
+  description: zod.string().min(generateInitiativePlanBodyDescriptionMin),
+  category: zod.string().optional(),
+});
+
+export const GenerateInitiativePlanResponse = zod.object({
+  title: zod.string(),
+  description: zod.string(),
+  category: zod.string(),
+  location: zod.string(),
+  fundingGoal: zod.number(),
+  structuredPlan: zod.object({
+    problemStatement: zod.string(),
+    executionSteps: zod.array(zod.string()),
+    estimatedBudget: zod.number(),
+    suggestedRoles: zod.array(zod.string()),
+    milestonesTimeline: zod.array(
+      zod.object({
+        title: zod.string(),
+        description: zod.string(),
+        targetAmount: zod.number(),
+        durationWeeks: zod.number(),
+      }),
+    ),
+  }),
+});
