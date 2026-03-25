@@ -1,0 +1,253 @@
+Upgrade the Initiative platform into a hackathon-winning demo product focused on emotional impact, visible AI intelligence, and trust-driven execution.
+
+This is NOT a full production build.
+This is a high-impact MVP optimized for demo experience, clarity, and storytelling.
+
+====================================
+PRIMARY GOAL
+====================================
+Transform Initiative from a generic CRUD social platform into an AI-powered real-world mission execution system.
+
+The app must create a strong "magic moment" where a user types an idea and sees a full structured mission generated instantly.
+
+====================================
+FEATURE 1 — AI MISSION BUILDER (CORE MAGIC MOMENT)
+====================================
+
+Implement a new primary flow:
+
+Step 1:
+User enters a simple text idea:
+Example: "Teach slum kids math"
+
+Step 2:
+System generates a structured mission including:
+
+- Mission title
+- Problem statement
+- Execution plan (step-by-step)
+- Required volunteers (roles + count)
+- Estimated budget breakdown
+- Milestones timeline
+- Expected impact projection
+
+This must feel intelligent.
+
+For now:
+Implement deterministic AI mock generator using templates or rule logic.
+
+Create:
+
+/services/aiMissionService.ts
+
+Function:
+generateMissionStructure(inputText)
+
+Store structured output in database.
+
+UI Requirements:
+
+- Show animated loading state
+- Show generated mission in rich visual layout
+- Allow user to edit before publishing
+
+====================================
+FEATURE 2 — EMOTIONAL MISSION DETAIL PAGE
+====================================
+
+Redesign initiative detail page to feel like a real-world mission dashboard.
+
+Include:
+
+- Hero section with mission story
+- Impact metrics cards
+- Volunteer faces grid (mock)
+- Visual milestone timeline
+- Budget usage visualization
+- Activity updates feed
+
+Must feel:
+
+Premium + Purpose-driven + Emotional
+
+Avoid generic SaaS card layout.
+
+====================================
+FEATURE 3 — TRUST SCORE SYSTEM
+====================================
+
+Create an Impact Trust Score.
+
+Logic based on:
+
+- Updates posted
+- Volunteers joined
+- Milestones completed
+- Funding progress
+
+Create:
+
+/services/trustScoreService.ts
+
+Display:
+
+- Trust badge on mission card
+- Trust breakdown section on mission page
+
+Visual style:
+GitHub contribution inspired.
+
+====================================
+FEATURE 4 — MILESTONE FUNDING VISUALIZATION
+====================================
+
+Each mission includes:
+
+- Total budget
+- Milestones
+- Locked vs unlocked funding
+
+UI must show:
+
+- Progress bar
+- Milestone cards
+- Unlock animation
+- Funding completion %
+
+Use mock funding.
+
+====================================
+FEATURE 5 — IMPACT PROOF FEED
+====================================
+
+Add timeline feed per mission:
+
+Update card includes:
+
+- Title
+- Description
+- Image placeholder
+- Date
+
+Seed realistic demo data.
+
+====================================
+FEATURE 6 — AI VOLUNTEER MATCH SUGGESTION
+====================================
+
+On mission page show:
+
+"Suggested volunteers"
+
+Match logic:
+
+- Based on mission category
+- Based on skill tags
+
+Show reasoning text:
+"You are a strong fit because..."
+
+Must simulate AI intelligence perception.
+
+====================================
+FEATURE 7 — MISSION LIFECYCLE TRACKER
+====================================
+
+Stages:
+
+- Idea
+- Planning
+- Active
+- Impact Delivered
+
+Add visual step tracker.
+
+====================================
+FEATURE 8 — DESIGN UPGRADE (VERY IMPORTANT)
+====================================
+
+Upgrade UI to feel:
+
+- Modern SaaS + Social movement hybrid
+- Emotional storytelling driven
+- Premium typography
+- Soft gradients + warm tones
+- Micro interactions (hover, transitions)
+
+Add:
+
+- Hero impact section
+- Real-world imagery placeholders
+- Narrative UI flow
+
+Avoid:
+
+- Generic bootstrap layouts
+- NGO style design
+
+====================================
+TECHNICAL CONSTRAINTS
+====================================
+
+- Keep monolithic production server
+- Do not introduce new services
+- No Docker
+- No microservices
+- Keep DB schema simple
+- Maintain deployment compatibility
+
+====================================
+DATA MODEL EXTENSIONS
+====================================
+
+Initiative:
+
+- structuredPlan
+- trustScore
+- milestones
+- lifecycleStage
+
+Update:
+
+- initiativeId
+- content
+- imageUrl
+- createdAt
+
+Volunteer:
+
+- skills
+- matchScore
+
+====================================
+DEMO DATA REQUIREMENTS
+====================================
+
+Seed realistic initiatives:
+
+- Education mission
+- Environmental mission
+- Healthcare mission
+
+====================================
+FINAL EXPECTATION
+====================================
+
+After implementation:
+
+- AI mission builder must work end-to-end
+- Mission page must feel emotional + real
+- Trust score visible
+- Milestones visible
+- Volunteer suggestions visible
+- Impact feed visible
+
+Explain:
+
+- New modules added
+- AI mock logic approach
+- Trust scoring logic
+- UI philosophy changes
+
+This is hackathon demo optimization.
+Prioritize perceived intelligence and storytelling over full completeness.
