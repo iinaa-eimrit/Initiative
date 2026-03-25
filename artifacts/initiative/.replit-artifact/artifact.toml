@@ -19,6 +19,7 @@ run = "pnpm --filter @workspace/initiative run dev"
 
 [services.production]
 serve = "static"
+publicDir = "dist/public"
 build = ["pnpm", "--filter", "@workspace/initiative", "run", "build"]
 
 [services.production.env]
