@@ -46,12 +46,11 @@ An AI-powered social impact execution platform. Users describe an idea and AI ge
 
 ## Production Architecture
 
-**Single-server deployment**: In production, the API server (`api-server`) builds and serves both the Express API and the React frontend static files from a single process.
+**Two-artifact deployment**: In production, the frontend and API are served as separate artifact services.
 
-- **Build**: The `api-server` build script (`build.mjs`) first builds the React frontend (`@workspace/initiative`), copies the output to `dist/public/`, then builds the Express server via esbuild.
-- **Runtime**: The Express server serves API routes at `/api`, serves static files from `dist/public/`, and falls back to `index.html` for client-side routing.
-- **Development**: Two separate services run — Vite dev server for the frontend (HMR) and Express for the API. The proxy routes `/` to Vite and `/api` to Express.
-- **Production config**: Only the `api-server` artifact has a production `run` command. The `initiative` artifact is dev-only (no `[services.production]` section).
+- **Frontend** (`initiative`): Built with Vite, served as static files (`serve = "static"`) at `/`. The deployment proxy handles SPA routing.
+- **API** (`api-server`): Express server bundled with esbuild, served at `/api`. Handles all backend routes.
+- **Development**: Two separate dev servers — Vite dev server for the frontend (HMR) and Express for the API. The proxy routes `/` to Vite and `/api` to Express.
 
 ## Structure
 

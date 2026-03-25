@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { 
   MapPin, Calendar, User, Users, CheckCircle2, Circle, ArrowLeft, Trophy, Heart,
-  Lock, Unlock, Sparkles, Clock, FileText 
+  Lock, Unlock, Sparkles, Clock, FileText, Send
 } from "lucide-react";
 import { 
   useGetInitiative, 
@@ -50,6 +50,7 @@ export default function InitiativeDetail() {
 
   const [isDonateOpen, setIsDonateOpen] = useState(false);
   const [isVolunteerOpen, setIsVolunteerOpen] = useState(false);
+  const [invitedVolunteers, setInvitedVolunteers] = useState<Set<number>>(new Set());
 
   const { data: initiative, isLoading, error } = useGetInitiative(initiativeId);
   const { data: suggestedVolunteers } = useGetSuggestedVolunteers(initiativeId);
@@ -329,7 +330,29 @@ export default function InitiativeDetail() {
                               <span key={j} className="px-2 py-0.5 bg-muted rounded-md text-[10px] font-medium">{skill}</span>
                             ))}
                           </div>
-                          <p className="text-xs text-muted-foreground italic">"{vol.reason}"</p>
+                          <p className="text-xs text-muted-foreground italic mb-3">"{vol.reason}"</p>
+                          <Button
+                            size="sm"
+                            className={`w-full rounded-xl text-xs h-8 transition-all ${
+                              invitedVolunteers.has(i)
+                                ? 'bg-teal-100 text-teal-700 hover:bg-teal-100 cursor-default'
+                                : 'bg-teal-600 hover:bg-teal-700 text-white'
+                            }`}
+                            disabled={invitedVolunteers.has(i)}
+                            onClick={() => {
+                              setInvitedVolunteers(prev => new Set(prev).add(i));
+                              toast({
+                                title: "Invitation sent!",
+                                description: `${vol.name} has been invited to join this initiative.`,
+                              });
+                            }}
+                          >
+                            {invitedVolunteers.has(i) ? (
+                              <><CheckCircle2 className="w-3.5 h-3.5 mr-1.5" /> Invited</>
+                            ) : (
+                              <><Send className="w-3.5 h-3.5 mr-1.5" /> Invite to Join</>
+                            )}
+                          </Button>
                         </CardContent>
                       </Card>
                     </motion.div>

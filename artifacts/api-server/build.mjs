@@ -3,38 +3,15 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { build as esbuild } from "esbuild";
 import esbuildPluginPino from "esbuild-plugin-pino";
-import { rm, cp, access } from "node:fs/promises";
-import { execSync } from "node:child_process";
+import { rm } from "node:fs/promises";
 
 globalThis.require = createRequire(import.meta.url);
 
 const artifactDir = path.dirname(fileURLToPath(import.meta.url));
-const workspaceRoot = path.resolve(artifactDir, "..", "..");
 
 async function buildAll() {
   const distDir = path.resolve(artifactDir, "dist");
   await rm(distDir, { recursive: true, force: true });
-
-  const skipFrontend = process.env.SKIP_FRONTEND_BUILD === "true";
-  if (!skipFrontend) {
-    console.log("Building frontend...");
-    execSync("pnpm --filter @workspace/initiative run build", {
-      cwd: workspaceRoot,
-      stdio: "inherit",
-      env: { ...process.env, BASE_PATH: "/", PORT: process.env.PORT || "3000" },
-    });
-
-    const frontendBuild = path.resolve(workspaceRoot, "artifacts/initiative/dist/public");
-    const publicDir = path.resolve(distDir, "public");
-
-    try {
-      await access(frontendBuild);
-      await cp(frontendBuild, publicDir, { recursive: true });
-      console.log("Frontend files copied to dist/public");
-    } catch {
-      console.warn("Warning: Frontend build output not found at", frontendBuild);
-    }
-  }
 
   console.log("Building API server...");
   await esbuild({
