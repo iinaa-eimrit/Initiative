@@ -38,39 +38,43 @@ app.get("/health", (_req, res) => {
 
 app.use("/api", router);
 
-if (process.env.NODE_ENV === "production") {
-  const currentDir = path.dirname(fileURLToPath(import.meta.url));
-  const frontendDist = path.resolve(currentDir, "public");
-  const indexHtml = path.join(frontendDist, "index.html");
+const currentDir = path.dirname(fileURLToPath(import.meta.url));
+const frontendDist = path.resolve(currentDir, "public");
+const indexHtml = path.join(frontendDist, "index.html");
+const frontendExists = existsSync(indexHtml);
 
-  const frontendExists = existsSync(indexHtml);
-  logger.info(
-    { frontendDist, indexHtml, frontendExists, currentDir },
-    "Production frontend path resolution",
-  );
+logger.info(
+  {
+    frontendDist,
+    indexHtml,
+    frontendExists,
+    currentDir,
+    cwd: process.cwd(),
+    NODE_ENV: process.env.NODE_ENV,
+  },
+  "Frontend path resolution",
+);
 
-  if (frontendExists) {
-    app.use(express.static(frontendDist));
+if (frontendExists) {
+  app.use(express.static(frontendDist));
 
-    app.get("/{*splat}", (_req, res) => {
-      res.sendFile(indexHtml, (err) => {
-        if (err) {
-          logger.error({ err, indexHtml }, "Failed to send index.html");
-          if (!res.headersSent) {
-            res.status(500).send("Server error: could not load page");
-          }
+  app.get("/{*splat}", (_req, res) => {
+    res.sendFile(indexHtml, (err) => {
+      if (err) {
+        logger.error({ err, indexHtml }, "Failed to send index.html");
+        if (!res.headersSent) {
+          res.status(500).send("Server error: could not load page");
         }
-      });
+      }
     });
-  } else {
-    logger.error(
-      { frontendDist, indexHtml },
-      "Frontend build not found! The dist/public directory is missing.",
-    );
-    app.get("/{*splat}", (_req, res) => {
-      res.status(503).send("Application is starting up - frontend not yet available");
-    });
-  }
+  });
+
+  logger.info("Frontend static serving enabled");
+} else {
+  logger.warn(
+    { frontendDist, indexHtml },
+    "Frontend build not found — static serving disabled (dev mode)",
+  );
 }
 
 export default app;
