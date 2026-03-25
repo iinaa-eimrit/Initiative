@@ -138,3 +138,15 @@ Run codegen: `pnpm --filter @workspace/api-spec run codegen`
 ### `scripts` (`@workspace/scripts`)
 
 Utility scripts. Run seed: `pnpm --filter @workspace/scripts exec tsx src/seed-initiatives.ts`
+
+## Deployment Hardening
+
+The following reliability measures are in place:
+
+- **Error Boundary**: Global React ErrorBoundary wraps the entire app; shows fallback UI on any runtime crash
+- **API Try/Catch**: Every API route is wrapped in try/catch with structured JSON error responses and server-side logging
+- **AI Failsafe**: AI plan generation has a two-tier fallback — first retries with safe inputs, then returns a hardcoded static plan; never crashes
+- **Auto-Seed**: Server checks DB on startup; if empty, seeds 4 demo initiatives with milestones, donations, volunteers, and updates inside a transaction (atomic — no partial data)
+- **Loading Skeletons**: Initiatives list shows skeleton cards during load; detail page shows skeleton layout; both have error states
+- **Health Check**: `GET /health` returns `{ status: "ok" }` for deployment probes
+- **Server Config**: Listens on `0.0.0.0:$PORT` with fail-fast startup (exits on fatal errors)

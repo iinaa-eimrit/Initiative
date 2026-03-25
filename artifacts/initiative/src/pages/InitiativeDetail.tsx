@@ -87,8 +87,37 @@ export default function InitiativeDetail() {
     defaultValues: { name: "", email: "", message: "", skills: "" }
   });
 
-  if (isLoading) return <div className="min-h-screen pt-32 flex justify-center"><div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>;
-  if (error || !initiative) return <div className="min-h-screen pt-32 text-center text-xl font-bold">Initiative not found</div>;
+  if (isLoading) return (
+    <div className="min-h-screen bg-background pt-28 pb-20">
+      <div className="w-full bg-gradient-mesh py-8">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
+          <div className="h-8 w-64 bg-muted/40 rounded-xl animate-pulse" />
+          <div className="h-12 w-full max-w-lg bg-muted/30 rounded-xl animate-pulse" />
+          <div className="h-6 w-48 bg-muted/20 rounded-lg animate-pulse" />
+        </div>
+      </div>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 grid md:grid-cols-3 gap-8">
+        <div className="md:col-span-2 space-y-6">
+          <div className="h-48 bg-muted/20 rounded-3xl animate-pulse" />
+          <div className="h-32 bg-muted/20 rounded-3xl animate-pulse" />
+        </div>
+        <div className="space-y-6">
+          <div className="h-40 bg-muted/20 rounded-3xl animate-pulse" />
+          <div className="h-24 bg-muted/20 rounded-3xl animate-pulse" />
+        </div>
+      </div>
+    </div>
+  );
+  if (error || !initiative) return (
+    <div className="min-h-screen pt-32 flex flex-col items-center justify-center text-center px-4">
+      <div className="w-16 h-16 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-6 text-2xl font-bold">!</div>
+      <h2 className="text-2xl font-bold mb-2">Initiative not found</h2>
+      <p className="text-muted-foreground mb-6">This initiative may have been removed or doesn't exist.</p>
+      <Link href="/initiatives">
+        <Button variant="outline" className="rounded-full"><ArrowLeft className="w-4 h-4 mr-2" /> Back to Initiatives</Button>
+      </Link>
+    </div>
+  );
 
   const progressPercent = Math.min((initiative.fundingRaised / initiative.fundingGoal) * 100, 100);
   const plan = initiative.structuredPlan as any;
