@@ -39,27 +39,42 @@ app.get("/health", (_req, res) => {
 app.use("/api", router);
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
-const frontendDist = path.resolve(currentDir, "public");
-const indexHtml = path.join(frontendDist, "index.html");
-const frontendExists = existsSync(indexHtml);
+const candidatePaths = [
+  path.resolve(currentDir, "public"),
+  path.resolve(process.cwd(), "dist", "public"),
+  path.resolve(process.cwd(), "artifacts", "api-server", "dist", "public"),
+];
+
+let frontendDist: string | null = null;
+let indexHtml: string | null = null;
+
+for (const candidate of candidatePaths) {
+  const candidateIndex = path.join(candidate, "index.html");
+  if (existsSync(candidateIndex)) {
+    frontendDist = candidate;
+    indexHtml = candidateIndex;
+    break;
+  }
+}
 
 logger.info(
   {
     frontendDist,
     indexHtml,
-    frontendExists,
+    frontendFound: frontendDist !== null,
     currentDir,
     cwd: process.cwd(),
+    candidatePaths,
     NODE_ENV: process.env.NODE_ENV,
   },
   "Frontend path resolution",
 );
 
-if (frontendExists) {
+if (frontendDist && indexHtml) {
   app.use(express.static(frontendDist));
 
   app.get("/{*splat}", (_req, res) => {
-    res.sendFile(indexHtml, (err) => {
+    res.sendFile(indexHtml!, (err) => {
       if (err) {
         logger.error({ err, indexHtml }, "Failed to send index.html");
         if (!res.headersSent) {
@@ -69,11 +84,11 @@ if (frontendExists) {
     });
   });
 
-  logger.info("Frontend static serving enabled");
+  logger.info({ frontendDist }, "Frontend static serving enabled");
 } else {
   logger.warn(
-    { frontendDist, indexHtml },
-    "Frontend build not found — static serving disabled (dev mode)",
+    { candidatePaths },
+    "Frontend build not found in any candidate path — static serving disabled",
   );
 }
 
