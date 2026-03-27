@@ -8,18 +8,38 @@ import {
   blogsTable,
   usersTable,
 } from "@workspace/db/schema";
-import { count } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { logger } from "./lib/logger";
 
+const EXPECTED_SEED_COUNT = 11;
+const SEED_MARKER_TITLE = "Vidya Setu: Bridge to Learning for Tribal Children";
+
 export async function ensureDemoData() {
   const [result] = await db.select({ count: count() }).from(initiativesTable);
+
   if (result.count > 0) {
-    logger.info({ count: result.count }, "Database has data, skipping seed");
-    return;
+    const [marker] = await db
+      .select({ count: count() })
+      .from(initiativesTable)
+      .where(eq(initiativesTable.title, SEED_MARKER_TITLE));
+
+    if (marker.count > 0 && result.count === EXPECTED_SEED_COUNT) {
+      logger.info({ count: result.count }, "Database has current seed data, skipping");
+      return;
+    }
+
+    logger.info({ count: result.count }, "Stale data detected — clearing and re-seeding...");
+    await db.delete(blogsTable);
+    await db.delete(updatesTable);
+    await db.delete(donationsTable);
+    await db.delete(volunteersTable);
+    await db.delete(milestonesTable);
+    await db.delete(initiativesTable);
+    await db.delete(usersTable);
   }
 
-  logger.info("Database empty — seeding demo data...");
+  logger.info("Seeding demo data...");
   try {
     await db.transaction(async (tx) => {
       await seedWithTx(tx);
