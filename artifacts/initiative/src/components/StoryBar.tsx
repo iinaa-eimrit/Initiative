@@ -26,18 +26,18 @@ const GRADIENT_COLORS = [
 
 export function StoryBar({ stories, onStoryClick }: StoryBarProps) {
   return (
-    <div className="flex gap-3 overflow-x-auto pb-2 hide-scrollbar" role="list" aria-label="Story bar">
+    <div className="flex gap-3 overflow-x-auto pb-1 hide-scrollbar" role="list" aria-label="Story bar">
       <motion.button
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="flex flex-col items-center gap-1.5 cursor-pointer group shrink-0 bg-transparent border-none p-0"
+        className="flex flex-col items-center gap-1 cursor-pointer group shrink-0 bg-transparent border-none p-0"
         aria-label="Create your story"
         type="button"
       >
-        <div className="w-[62px] h-[62px] rounded-full bg-muted/40 border-2 border-dashed border-muted-foreground/25 flex items-center justify-center group-hover:border-primary group-hover:bg-primary/5 transition-all duration-300 group-focus-visible:ring-2 group-focus-visible:ring-primary group-focus-visible:ring-offset-2">
-          <Plus className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+        <div className="w-12 h-12 rounded-full bg-muted/40 border-[1.5px] border-dashed border-muted-foreground/25 flex items-center justify-center group-hover:border-primary group-hover:bg-primary/5 transition-all duration-200 group-focus-visible:ring-2 group-focus-visible:ring-primary group-focus-visible:ring-offset-1">
+          <Plus className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
         </div>
-        <span className="text-[10px] text-muted-foreground font-medium">Your Story</span>
+        <span className="text-[9px] text-muted-foreground font-medium">Your Story</span>
       </motion.button>
 
       {stories.map((story, i) => (
@@ -45,20 +45,20 @@ export function StoryBar({ stories, onStoryClick }: StoryBarProps) {
           key={story.id}
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: i * 0.04 }}
-          className="flex flex-col items-center gap-1.5 cursor-pointer group shrink-0 bg-transparent border-none p-0"
+          transition={{ delay: i * 0.03 }}
+          className="flex flex-col items-center gap-1 cursor-pointer group shrink-0 bg-transparent border-none p-0"
           onClick={() => onStoryClick?.(story.id)}
           aria-label={`View ${story.name}'s story`}
           type="button"
         >
-          <div className="story-ring p-[2.5px] rounded-full group-hover:scale-110 transition-transform duration-300 group-focus-visible:ring-2 group-focus-visible:ring-primary group-focus-visible:ring-offset-2">
-            <div className="w-[57px] h-[57px] rounded-full bg-card p-[2px]">
-              <div className={`w-full h-full rounded-full bg-gradient-to-br ${GRADIENT_COLORS[i % GRADIENT_COLORS.length]} flex items-center justify-center text-white font-bold text-lg shadow-inner`}>
+          <div className="story-ring p-[2px] rounded-full group-hover:scale-105 transition-transform duration-200 group-focus-visible:ring-2 group-focus-visible:ring-primary group-focus-visible:ring-offset-1">
+            <div className="w-[46px] h-[46px] rounded-full bg-card p-[1.5px]">
+              <div className={`w-full h-full rounded-full bg-gradient-to-br ${GRADIENT_COLORS[i % GRADIENT_COLORS.length]} flex items-center justify-center text-white font-semibold text-sm`}>
                 {story.initial}
               </div>
             </div>
           </div>
-          <span className="text-[10px] text-muted-foreground font-medium truncate max-w-[64px] text-center">
+          <span className="text-[9px] text-muted-foreground font-medium truncate max-w-[52px] text-center">
             {story.name.split(" ")[0]}
           </span>
         </motion.button>

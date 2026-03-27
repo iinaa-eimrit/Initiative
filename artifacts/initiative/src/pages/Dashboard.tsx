@@ -55,45 +55,45 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-background pt-16 pb-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-background pt-16 pb-10">
+      <div className="page-container">
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-6"
+          className="mb-5"
         >
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold">
+              <h1 className="text-xl font-semibold">
                 Impact <span className="text-gradient-hero">Dashboard</span>
               </h1>
-              <p className="text-muted-foreground text-sm mt-0.5">Track missions, updates, and community progress.</p>
+              <p className="text-muted-foreground text-[13px] mt-0.5">Track missions, updates, and community progress.</p>
             </div>
             <Link href="/initiatives/new">
-              <Button size="sm" className="rounded-full shadow-lg shadow-primary/20 bg-gradient-to-r from-primary to-teal-500 border-0">
-                <Sparkles className="w-3.5 h-3.5 mr-1.5" /> Generate with AI
+              <Button size="sm" className="rounded-lg h-7 text-[11px] shadow-sm bg-gradient-to-r from-primary to-teal-500 border-0">
+                <Sparkles className="w-3 h-3 mr-1" /> Generate with AI
               </Button>
             </Link>
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
           {statCards.map((stat, i) => (
             <motion.div
               key={stat.label}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
+              transition={{ delay: i * 0.04 }}
             >
               <Card className="card-elevated overflow-hidden">
-                <div className={`h-1 w-full bg-gradient-to-r ${stat.gradient}`} />
-                <CardContent className="p-4">
-                  <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.gradient} flex items-center justify-center text-white shadow-md mb-3`}>
-                    <stat.icon className="w-5 h-5" />
+                <div className={`h-0.5 w-full bg-gradient-to-r ${stat.gradient}`} />
+                <CardContent className="p-3.5">
+                  <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${stat.gradient} flex items-center justify-center text-white shadow-sm mb-2.5`}>
+                    <stat.icon className="w-4 h-4" />
                   </div>
-                  <p className="text-2xl font-bold tracking-tight">{stat.value}</p>
+                  <p className="text-xl font-semibold tracking-tight">{stat.value}</p>
                   <p className="text-[10px] text-muted-foreground mt-0.5 font-medium">{stat.label}</p>
-                  <p className="text-[9px] text-primary font-medium mt-1.5 flex items-center gap-1">
+                  <p className="text-[9px] text-primary font-medium mt-1 flex items-center gap-0.5">
                     <TrendingUp className="w-2.5 h-2.5" /> {stat.trend}
                   </p>
                 </CardContent>
@@ -106,88 +106,86 @@ export default function Dashboard() {
           <div className="lg:col-span-2 space-y-4">
             <div>
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-base font-bold flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-primary to-teal-500 flex items-center justify-center">
-                    <Target className="w-3.5 h-3.5 text-white" />
+                <h2 className="text-sm font-semibold flex items-center gap-1.5">
+                  <div className="w-5 h-5 rounded-md bg-gradient-to-br from-primary to-teal-500 flex items-center justify-center">
+                    <Target className="w-3 h-3 text-white" />
                   </div>
                   Active Missions
                 </h2>
                 <Link href="/initiatives">
-                  <Button variant="ghost" size="sm" className="rounded-full text-primary text-xs h-8">
-                    View All <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                  <Button variant="ghost" size="sm" className="rounded-lg text-primary text-[11px] h-7 px-2">
+                    View All <ArrowRight className="w-3 h-3 ml-0.5" />
                   </Button>
                 </Link>
               </div>
 
               {isLoading ? (
-                <div className="space-y-3">
+                <div className="space-y-2.5">
                   {[1, 2, 3].map((i) => (
-                    <div key={i} className="h-28 bg-muted/20 rounded-2xl animate-pulse" />
+                    <div key={i} className="h-24 bg-muted/20 rounded-xl animate-pulse" />
                   ))}
                 </div>
               ) : (
-                <div className="space-y-3">
-                  {initiatives?.filter(i => i.status === "active").slice(0, 6).map((initiative, idx) => {
+                <div className="space-y-2.5">
+                  {initiatives?.filter(i => i.status === "active").slice(0, 5).map((initiative, idx) => {
                     const progress = Math.min((initiative.fundingRaised / initiative.fundingGoal) * 100, 100);
                     const isLiked = likedIds.has(initiative.id);
                     const viewCount = 80 + (initiative.id * 31) % 200;
                     return (
                       <motion.div
                         key={initiative.id}
-                        initial={{ opacity: 0, x: -10 }}
+                        initial={{ opacity: 0, x: -8 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: idx * 0.05 }}
+                        transition={{ delay: idx * 0.04 }}
                       >
                         <Card className="card-elevated">
-                          <CardContent className="p-4">
+                          <CardContent className="p-3.5">
                             <div className="flex items-start justify-between gap-3">
                               <Link href={`/initiatives/${initiative.id}`} className="flex-1 min-w-0 cursor-pointer">
-                                <div className="flex items-center gap-2.5 mb-1.5">
-                                  <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-teal-400 flex items-center justify-center text-white font-bold text-[10px] shrink-0 shadow-sm">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <div className="w-6 h-6 rounded-md bg-gradient-to-br from-primary to-teal-400 flex items-center justify-center text-white font-semibold text-[9px] shrink-0 shadow-xs">
                                     {initiative.creatorName.charAt(0)}
                                   </div>
-                                  <div className="flex items-center gap-1.5 flex-wrap">
-                                    <span className="font-semibold text-xs">{initiative.creatorName}</span>
-                                    <Badge variant="secondary" className="text-[9px] capitalize rounded-full px-1.5 py-0">
+                                  <div className="flex items-center gap-1 flex-wrap">
+                                    <span className="font-medium text-[12px]">{initiative.creatorName}</span>
+                                    <Badge variant="secondary" className="text-[8px] capitalize rounded-md px-1 py-0 h-3.5">
                                       {initiative.category}
                                     </Badge>
-                                    <Badge variant="outline" className="text-[9px] capitalize rounded-full px-1.5 py-0">
+                                    <Badge variant="outline" className="text-[8px] capitalize rounded-md px-1 py-0 h-3.5">
                                       {initiative.lifecycleStage.replace("_", " ")}
                                     </Badge>
                                   </div>
                                 </div>
-                                <h3 className="font-semibold text-sm hover:text-primary transition-colors">{initiative.title}</h3>
-                                <div className="flex items-center gap-3 mt-1.5 text-[10px] text-muted-foreground">
-                                  <span className="flex items-center gap-1">
-                                    <Users className="w-3 h-3" /> {initiative.volunteerCount}
+                                <h3 className="font-medium text-[13px] hover:text-primary transition-colors leading-snug">{initiative.title}</h3>
+                                <div className="flex items-center gap-2.5 mt-1 text-[10px] text-muted-foreground">
+                                  <span className="flex items-center gap-0.5">
+                                    <Users className="w-2.5 h-2.5" /> {initiative.volunteerCount}
                                   </span>
-                                  <span className="flex items-center gap-1">
-                                    ₹{initiative.fundingRaised.toLocaleString('en-IN')}
+                                  <span>₹{initiative.fundingRaised.toLocaleString('en-IN')}</span>
+                                  <span className="flex items-center gap-0.5">
+                                    <MapPin className="w-2.5 h-2.5" /> {initiative.location?.split(",")[0]}
                                   </span>
-                                  <span className="flex items-center gap-1">
-                                    <MapPin className="w-3 h-3" /> {initiative.location?.split(",")[0]}
-                                  </span>
-                                  <span className="flex items-center gap-1">
-                                    <Eye className="w-3 h-3" /> {viewCount}
+                                  <span className="flex items-center gap-0.5">
+                                    <Eye className="w-2.5 h-2.5" /> {viewCount}
                                   </span>
                                 </div>
-                                <div className="mt-2">
-                                  <Progress value={progress} className="h-1.5 rounded-full" indicatorClassName="progress-gradient" />
-                                  <p className="text-[10px] text-muted-foreground mt-0.5">{Math.round(progress)}% funded</p>
+                                <div className="mt-1.5">
+                                  <Progress value={progress} className="h-1 rounded-full" indicatorClassName="progress-gradient" />
+                                  <p className="text-[9px] text-muted-foreground mt-0.5">{Math.round(progress)}% funded</p>
                                 </div>
                               </Link>
-                              <div className="flex flex-col items-center gap-1.5">
+                              <div className="flex flex-col items-center gap-1">
                                 <TrustScoreBadge score={initiative.trustScore?.overall ?? 0} />
                                 <motion.button
                                   whileTap={{ scale: 0.85 }}
                                   onClick={() => handleLike(initiative.id, initiative.title)}
-                                  className={`flex items-center gap-1 text-[10px] px-2 py-1 rounded-full transition-all ${
+                                  className={`flex items-center gap-0.5 text-[9px] px-1.5 py-0.5 rounded-md transition-all ${
                                     isLiked
                                       ? "bg-red-50 text-red-500 dark:bg-red-900/20"
                                       : "hover:bg-muted/50 text-muted-foreground hover:text-red-500"
                                   }`}
                                 >
-                                  <Heart className={`w-3 h-3 ${isLiked ? "fill-red-500" : ""}`} />
+                                  <Heart className={`w-2.5 h-2.5 ${isLiked ? "fill-red-500" : ""}`} />
                                   {isLiked ? "Liked" : "Like"}
                                 </motion.button>
                               </div>
@@ -202,13 +200,13 @@ export default function Dashboard() {
             </div>
 
             <div>
-              <h2 className="text-base font-bold flex items-center gap-2 mb-3">
-                <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
-                  <MessageSquare className="w-3.5 h-3.5 text-white" />
+              <h2 className="text-sm font-semibold flex items-center gap-1.5 mb-3">
+                <div className="w-5 h-5 rounded-md bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                  <MessageSquare className="w-3 h-3 text-white" />
                 </div>
                 Impact Updates
               </h2>
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {initiatives?.slice(0, 4).map((initiative, idx) => {
                 const trustLabels = [
                   { text: "AI Verified", color: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400", icon: "🤖" },
@@ -225,49 +223,49 @@ export default function Dashboard() {
                 ];
                 return (
                   <Card key={`update-${initiative.id}`} className="card-elevated">
-                    <CardContent className="p-4">
-                      <div className="flex items-start gap-3">
-                        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary/80 to-teal-400 flex items-center justify-center text-white font-bold text-xs shrink-0 shadow-sm">
+                    <CardContent className="p-3.5">
+                      <div className="flex items-start gap-2.5">
+                        <div className="w-6 h-6 rounded-md bg-gradient-to-br from-primary/80 to-teal-400 flex items-center justify-center text-white font-semibold text-[9px] shrink-0 shadow-xs">
                           {initiative.creatorName.charAt(0)}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-0.5">
-                            <span className="font-medium text-xs">{initiative.creatorName}</span>
-                            <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-semibold ${label.color}`}>
+                          <div className="flex items-center gap-1.5 mb-0.5">
+                            <span className="font-medium text-[12px]">{initiative.creatorName}</span>
+                            <span className={`inline-flex items-center gap-0.5 px-1 py-0 rounded-md text-[8px] font-medium ${label.color}`}>
                               {label.icon} {label.text}
                             </span>
                           </div>
                           <Link href={`/initiatives/${initiative.id}`}>
-                            <h4 className="font-semibold text-xs hover:text-primary transition-colors cursor-pointer truncate">
+                            <h4 className="font-medium text-[12px] hover:text-primary transition-colors cursor-pointer truncate leading-snug">
                               {initiative.title}
                             </h4>
                           </Link>
-                          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
+                          <p className="text-[11px] text-muted-foreground mt-0.5 line-clamp-2 leading-relaxed">
                             {updateMessages[idx % updateMessages.length]}
                           </p>
-                          <div className="flex items-center gap-3 mt-2">
+                          <div className="flex items-center gap-2.5 mt-1.5">
                             <motion.button
                               whileTap={{ scale: 0.85 }}
                               onClick={() => handleLike(initiative.id, initiative.title)}
-                              className={`flex items-center gap-1 text-[10px] transition-colors ${
+                              className={`flex items-center gap-0.5 text-[10px] transition-colors ${
                                 likedIds.has(initiative.id)
                                   ? "text-red-500"
                                   : "text-muted-foreground hover:text-red-500"
                               }`}
                             >
-                              <Heart className={`w-3 h-3 ${likedIds.has(initiative.id) ? "fill-red-500" : ""}`} /> Like
+                              <Heart className={`w-2.5 h-2.5 ${likedIds.has(initiative.id) ? "fill-red-500" : ""}`} /> Like
                             </motion.button>
                             <button
                               onClick={() => toast({ title: "Coming soon", description: "Comments will be available in the next update." })}
-                              className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-primary transition-colors"
+                              className="flex items-center gap-0.5 text-[10px] text-muted-foreground hover:text-primary transition-colors"
                             >
-                              <MessageSquare className="w-3 h-3" /> Comment
+                              <MessageSquare className="w-2.5 h-2.5" /> Comment
                             </button>
                             <button
                               onClick={() => toast({ title: "Link copied!", description: "Share link copied to clipboard." })}
-                              className="flex items-center gap-1 text-[10px] text-muted-foreground hover:text-primary transition-colors"
+                              className="flex items-center gap-0.5 text-[10px] text-muted-foreground hover:text-primary transition-colors"
                             >
-                              <Share2 className="w-3 h-3" /> Share
+                              <Share2 className="w-2.5 h-2.5" /> Share
                             </button>
                           </div>
                         </div>
@@ -280,70 +278,70 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="space-y-4 sticky top-16 self-start">
+          <div className="space-y-3 lg:sticky lg:top-16 lg:self-start">
             <Card className="card-elevated overflow-hidden">
-              <div className="h-1 bg-gradient-to-r from-amber-400 via-orange-400 to-red-400" />
-              <CardHeader className="pb-1 pt-3 px-4">
-                <h3 className="font-semibold text-sm flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
-                    <Trophy className="w-3.5 h-3.5 text-white" />
+              <div className="h-0.5 bg-gradient-to-r from-amber-400 via-orange-400 to-red-400" />
+              <CardHeader className="pb-1 pt-3 px-3.5">
+                <h3 className="font-medium text-[13px] flex items-center gap-1.5">
+                  <div className="w-5 h-5 rounded-md bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+                    <Trophy className="w-3 h-3 text-white" />
                   </div>
                   Leaderboard
                 </h3>
               </CardHeader>
-              <CardContent className="pt-0 px-4 pb-3">
+              <CardContent className="pt-0 px-3.5 pb-3">
                 <Tabs value={leaderboardTab} onValueChange={setLeaderboardTab}>
-                  <TabsList className="w-full rounded-xl mb-2 h-8">
-                    <TabsTrigger value="volunteers" className="flex-1 rounded-lg text-[10px]">Top Volunteers</TabsTrigger>
-                    <TabsTrigger value="donors" className="flex-1 rounded-lg text-[10px]">Top Funded</TabsTrigger>
+                  <TabsList className="w-full rounded-lg mb-2 h-7">
+                    <TabsTrigger value="volunteers" className="flex-1 rounded-md text-[10px]">Top Volunteers</TabsTrigger>
+                    <TabsTrigger value="donors" className="flex-1 rounded-md text-[10px]">Top Funded</TabsTrigger>
                   </TabsList>
-                  <TabsContent value="volunteers" className="space-y-1">
+                  <TabsContent value="volunteers" className="space-y-0.5">
                     {topVolunteerInitiatives.map((init, i) => (
                       <Link key={init.id} href={`/initiatives/${init.id}`}>
                         <motion.div
-                          whileHover={{ x: 3 }}
-                          className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-muted/50 transition-all cursor-pointer"
+                          whileHover={{ x: 2 }}
+                          className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-muted/50 transition-all cursor-pointer"
                         >
-                          <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold ${
-                            i === 0 ? "bg-gradient-to-br from-amber-400 to-amber-600 text-white shadow-sm" :
-                            i === 1 ? "bg-gradient-to-br from-gray-300 to-gray-500 text-white shadow-sm" :
-                            i === 2 ? "bg-gradient-to-br from-orange-400 to-orange-600 text-white shadow-sm" :
+                          <div className={`w-5.5 h-5.5 rounded-md flex items-center justify-center text-[9px] font-semibold ${
+                            i === 0 ? "bg-gradient-to-br from-amber-400 to-amber-600 text-white" :
+                            i === 1 ? "bg-gradient-to-br from-gray-300 to-gray-500 text-white" :
+                            i === 2 ? "bg-gradient-to-br from-orange-400 to-orange-600 text-white" :
                             "bg-muted text-muted-foreground"
                           }`}>
-                            {i === 0 ? <Award className="w-3.5 h-3.5" /> : i + 1}
+                            {i === 0 ? <Award className="w-3 h-3" /> : i + 1}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-xs font-medium truncate">{init.title.split(":")[0]}</p>
-                            <p className="text-[10px] text-muted-foreground">{init.volunteerCount} volunteers</p>
+                            <p className="text-[11px] font-medium truncate">{init.title.split(":")[0]}</p>
+                            <p className="text-[9px] text-muted-foreground">{init.volunteerCount} volunteers</p>
                           </div>
                           {i < 3 && (
-                            <span className="text-[10px]">{i === 0 ? "🥇" : i === 1 ? "🥈" : "🥉"}</span>
+                            <span className="text-[9px]">{i === 0 ? "🥇" : i === 1 ? "🥈" : "🥉"}</span>
                           )}
                         </motion.div>
                       </Link>
                     ))}
                   </TabsContent>
-                  <TabsContent value="donors" className="space-y-1">
+                  <TabsContent value="donors" className="space-y-0.5">
                     {topFundedInitiatives.map((init, i) => (
                       <Link key={init.id} href={`/initiatives/${init.id}`}>
                         <motion.div
-                          whileHover={{ x: 3 }}
-                          className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-muted/50 transition-all cursor-pointer"
+                          whileHover={{ x: 2 }}
+                          className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-muted/50 transition-all cursor-pointer"
                         >
-                          <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold ${
-                            i === 0 ? "bg-gradient-to-br from-emerald-400 to-emerald-600 text-white shadow-sm" :
-                            i === 1 ? "bg-gradient-to-br from-emerald-300 to-emerald-500 text-white shadow-sm" :
-                            i === 2 ? "bg-gradient-to-br from-teal-400 to-teal-600 text-white shadow-sm" :
+                          <div className={`w-5.5 h-5.5 rounded-md flex items-center justify-center text-[9px] font-semibold ${
+                            i === 0 ? "bg-gradient-to-br from-emerald-400 to-emerald-600 text-white" :
+                            i === 1 ? "bg-gradient-to-br from-emerald-300 to-emerald-500 text-white" :
+                            i === 2 ? "bg-gradient-to-br from-teal-400 to-teal-600 text-white" :
                             "bg-muted text-muted-foreground"
                           }`}>
-                            {i === 0 ? <Award className="w-3.5 h-3.5" /> : i + 1}
+                            {i === 0 ? <Award className="w-3 h-3" /> : i + 1}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-xs font-medium truncate">{init.title.split(":")[0]}</p>
-                            <p className="text-[10px] text-muted-foreground">₹{init.fundingRaised.toLocaleString('en-IN')} raised</p>
+                            <p className="text-[11px] font-medium truncate">{init.title.split(":")[0]}</p>
+                            <p className="text-[9px] text-muted-foreground">₹{init.fundingRaised.toLocaleString('en-IN')} raised</p>
                           </div>
                           {i < 3 && (
-                            <span className="text-[10px]">{i === 0 ? "🥇" : i === 1 ? "🥈" : "🥉"}</span>
+                            <span className="text-[9px]">{i === 0 ? "🥇" : i === 1 ? "🥈" : "🥉"}</span>
                           )}
                         </motion.div>
                       </Link>
@@ -354,13 +352,13 @@ export default function Dashboard() {
             </Card>
 
             <Card className="card-elevated">
-              <CardContent className="p-4">
-                <h3 className="font-semibold text-xs mb-2.5 flex items-center gap-1.5">
-                  <Flame className="w-3.5 h-3.5 text-orange-500" /> Trending
+              <CardContent className="p-3.5">
+                <h3 className="font-medium text-[12px] mb-2 flex items-center gap-1">
+                  <Flame className="w-3 h-3 text-orange-500" /> Trending
                 </h3>
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex flex-wrap gap-1">
                   {TRENDING_TAGS.map((tag) => (
-                    <Badge key={tag} variant="secondary" className="rounded-full cursor-pointer hover:bg-primary/10 hover:text-primary transition-all duration-200 text-[10px] px-2.5 py-0.5">
+                    <Badge key={tag} variant="secondary" className="rounded-md cursor-pointer hover:bg-primary/10 hover:text-primary transition-all duration-150 text-[9px] px-2 py-0.5">
                       {tag}
                     </Badge>
                   ))}
@@ -369,49 +367,49 @@ export default function Dashboard() {
             </Card>
 
             <Card className="card-elevated">
-              <CardContent className="p-4">
-                <h3 className="font-semibold text-xs mb-3 flex items-center gap-1.5">
-                  <TrendingUp className="w-3.5 h-3.5 text-primary" /> Social Proof
+              <CardContent className="p-3.5">
+                <h3 className="font-medium text-[12px] mb-2 flex items-center gap-1">
+                  <TrendingUp className="w-3 h-3 text-primary" /> Social Proof
                 </h3>
-                <div className="space-y-2.5">
+                <div className="space-y-2">
                   {[
                     { label: "Total Views", value: "2,847", icon: Eye, color: "text-foreground" },
                     { label: "Joins Today", value: "+14", icon: Users, color: "text-primary" },
                     { label: "Likes Today", value: "+38", icon: Heart, color: "text-rose-500" },
                   ].map((item) => (
-                    <div key={item.label} className="flex items-center justify-between text-xs">
-                      <span className="text-muted-foreground flex items-center gap-1.5">
-                        <item.icon className="w-3.5 h-3.5" /> {item.label}
+                    <div key={item.label} className="flex items-center justify-between text-[11px]">
+                      <span className="text-muted-foreground flex items-center gap-1">
+                        <item.icon className="w-3 h-3" /> {item.label}
                       </span>
-                      <span className={`font-bold ${item.color}`}>{item.value}</span>
+                      <span className={`font-semibold ${item.color}`}>{item.value}</span>
                     </div>
                   ))}
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="overflow-hidden border-0 bg-gradient-to-br from-primary/10 via-primary/5 to-teal-500/10 dark:from-primary/15 dark:to-teal-500/15 shadow-lg">
-              <CardContent className="p-5 text-center">
-                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary to-teal-500 flex items-center justify-center text-white mx-auto mb-3 shadow-lg">
-                  <Sparkles className="w-5 h-5" />
+            <Card className="overflow-hidden border-0 bg-gradient-to-br from-primary/8 via-primary/4 to-teal-500/8 dark:from-primary/12 dark:to-teal-500/12 shadow-sm">
+              <CardContent className="p-4 text-center">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-teal-500 flex items-center justify-center text-white mx-auto mb-2.5 shadow-md">
+                  <Sparkles className="w-4 h-4" />
                 </div>
-                <h3 className="font-semibold text-sm mb-1">Ready to lead?</h3>
-                <p className="text-xs text-muted-foreground mb-3">Use AI to structure your next initiative</p>
+                <h3 className="font-medium text-[13px] mb-0.5">Ready to lead?</h3>
+                <p className="text-[11px] text-muted-foreground mb-2.5">Use AI to structure your next initiative</p>
                 <Link href="/initiatives/new">
-                  <Button size="sm" className="rounded-full w-full text-xs bg-gradient-to-r from-primary to-teal-500 border-0 shadow-md">
-                    <Sparkles className="w-3 h-3 mr-1.5" /> Generate with AI
+                  <Button size="sm" className="rounded-lg w-full text-[11px] h-7 bg-gradient-to-r from-primary to-teal-500 border-0 shadow-sm">
+                    <Sparkles className="w-3 h-3 mr-1" /> Generate with AI
                   </Button>
                 </Link>
               </CardContent>
             </Card>
 
             <Card className="card-elevated">
-              <CardContent className="p-4">
-                <h3 className="font-semibold text-xs mb-2.5">Categories</h3>
-                <div className="flex flex-wrap gap-1.5">
+              <CardContent className="p-3.5">
+                <h3 className="font-medium text-[12px] mb-2">Categories</h3>
+                <div className="flex flex-wrap gap-1">
                   {["Education", "Environment", "Healthcare", "Community", "Women Empowerment", "Rural Development"].map((cat) => (
                     <Link key={cat} href="/initiatives">
-                      <Badge variant="secondary" className="rounded-full cursor-pointer hover:bg-primary/10 hover:text-primary transition-all duration-200 text-[10px] px-2.5 py-0.5">
+                      <Badge variant="secondary" className="rounded-md cursor-pointer hover:bg-primary/10 hover:text-primary transition-all duration-150 text-[9px] px-2 py-0.5">
                         {cat}
                       </Badge>
                     </Link>

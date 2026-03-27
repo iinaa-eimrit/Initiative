@@ -35,13 +35,13 @@ function Router() {
           <Route component={NotFound} />
         </Switch>
       </main>
-      <footer className="bg-card border-t border-border/50 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="flex items-center gap-2">
-            <span className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold">I</span>
-            <span className="font-display font-bold text-xl tracking-tight">Initiative</span>
+      <footer className="bg-card border-t border-border/50 py-5">
+        <div className="page-container flex flex-col md:flex-row justify-between items-center gap-3">
+          <div className="flex items-center gap-1.5">
+            <span className="w-6 h-6 rounded-md bg-gradient-to-br from-primary to-teal-500 flex items-center justify-center text-white font-semibold text-[10px]">I</span>
+            <span className="font-semibold text-sm tracking-tight">Initiative</span>
           </div>
-          <p className="text-sm text-muted-foreground">&copy; {new Date().getFullYear()} Initiative Platform. Empowering change.</p>
+          <p className="text-[11px] text-muted-foreground">&copy; {new Date().getFullYear()} Initiative Platform. Empowering change.</p>
         </div>
       </footer>
     </div>

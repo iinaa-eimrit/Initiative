@@ -1,0 +1,208 @@
+Refine the Initiative platform UI to eliminate stretched layouts, fix visual imbalance, and create a tight, aesthetically pleasing, attention-grabbing interface.
+
+IMPORTANT:
+This is a precision UI polish task.
+Focus on proportions, containment, typography, and visual rhythm — not adding features.
+
+====================================
+PRIMARY GOAL
+====================================
+
+Make the UI feel:
+
+- Well-contained (not stretched)
+- Balanced and measured
+- Visually tight and premium
+- Attention-guided
+
+====================================
+1. FIX STRETCHED LAYOUT (CRITICAL)
+====================================
+
+Problem:
+Content is stretched full-width and feels visually loose.
+
+Fix:
+
+- Add max-width container to all pages:
+  max-width: 1100px–1280px
+- Center content using mx-auto
+- Add horizontal padding px-4 / px-6
+
+Ensure:
+
+- No content spans edge-to-edge unnecessarily
+- Cards and sections feel contained and aligned
+
+====================================
+2. APPLY GRID DISCIPLINE
+====================================
+
+- Use consistent grid system:
+  2 or 3 columns (desktop)
+- Use equal column widths
+- Maintain consistent gaps (gap-4 or gap-5)
+
+Avoid:
+
+- uneven spacing
+- floating elements without alignment
+
+====================================
+3. REDUCE ELEMENT WIDTHS
+====================================
+
+Problem:
+Cards and sections feel too wide.
+
+Fix:
+
+- Limit card width
+- Add internal padding (p-4 or p-5)
+- Keep content compact
+
+Cards should feel:
+
+👉 “tight blocks”, not stretched panels
+
+====================================
+4. TYPOGRAPHY SYSTEM (VERY IMPORTANT)
+====================================
+
+Replace current font with modern, premium UI font:
+
+Recommended:
+
+- Inter
+OR
+- Plus Jakarta Sans
+OR
+- Satoshi (if available)
+
+Apply hierarchy:
+
+- Headings: font-semibold or font-bold
+- Body: font-normal
+- Metadata: text-sm + muted color
+
+Adjust sizes:
+
+- Title: text-lg / text-xl (not too large)
+- Subtitle: text-base
+- Meta: text-xs or text-sm
+
+Ensure:
+
+- Consistent line height
+- Tight vertical rhythm
+
+====================================
+5. IMPROVE VISUAL RHYTHM
+====================================
+
+Apply consistent spacing system:
+
+- Between elements: space-y-2 or space-y-3
+- Between sections: space-y-6 or space-y-8
+
+Avoid:
+
+- random spacing
+- large vertical gaps
+
+====================================
+6. CARD DESIGN REFINEMENT
+====================================
+
+Each card must have:
+
+- Defined padding (p-4 or p-5)
+- Rounded corners (rounded-xl)
+- Subtle border or shadow
+
+Use:
+
+- shadow-sm (light)
+- hover: shadow-md + slight scale
+
+Ensure cards feel:
+
+👉 contained, clickable, structured
+
+====================================
+7. ALIGNMENT CONSISTENCY
+====================================
+
+Ensure:
+
+- Left alignment for text
+- Consistent icon + text spacing
+- No floating misaligned elements
+
+Everything must align to grid.
+
+====================================
+8. COLOR + CONTRAST TUNING
+====================================
+
+- Use softer backgrounds
+- Improve text contrast
+- Avoid washed-out look
+
+Primary focus:
+
+- Make important elements stand out
+- Reduce visual noise
+
+====================================
+9. CTA IMPROVEMENT
+====================================
+
+Buttons must:
+
+- Have proper padding (px-4 py-2)
+- Not be overly wide
+- Be visually distinct
+
+Primary CTA:
+
+- Slight gradient or glow
+- Strong contrast
+
+====================================
+10. REMOVE UNNECESSARY SPACE
+====================================
+
+Audit UI and remove:
+
+- empty sections
+- excessive margins
+- redundant containers
+
+Replace with:
+
+- meaningful content
+- tighter grouping
+
+====================================
+11. FINAL VISUAL CHECK
+====================================
+
+After changes, UI should feel:
+
+- Balanced
+- Compact
+- Premium
+- Easy to scan
+- Visually satisfying
+
+====================================
+OUTPUT
+====================================
+
+Explain:
+
+- how layout was constrained
+- what typography changes were made
+- how spacing was standardized
+- how visual balance improved
