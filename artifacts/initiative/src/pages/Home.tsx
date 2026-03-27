@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Globe2, HeartHandshake, Target, Sparkles, Shield, BarChart3, Users, DollarSign, CheckCircle2, Lightbulb, Cpu, Handshake, Trophy, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -46,6 +46,7 @@ const LIVE_ACTIVITIES = [
 export default function Home() {
   const { data: initiatives } = useListInitiatives({});
   const [tickerIndex, setTickerIndex] = useState(0);
+  const [, navigate] = useLocation();
 
   const activeInitiatives = initiatives?.filter((i) => i.status === "active").slice(0, 3) ?? [];
   const completedInitiatives = initiatives?.filter((i) => i.status === "completed").slice(0, 2) ?? [];
@@ -92,8 +93,8 @@ export default function Home() {
                       type="text"
                       placeholder="Describe what you want to change in the world..."
                       className="flex-1 h-14 px-4 bg-transparent text-base outline-none placeholder:text-muted-foreground/60"
-                      onFocus={(e) => {
-                        window.location.href = `${import.meta.env.BASE_URL}initiatives/new`;
+                      onFocus={() => {
+                        navigate("/initiatives/new");
                       }}
                       readOnly
                     />
