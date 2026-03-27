@@ -3,28 +3,35 @@ import { Link } from "wouter";
 import { motion } from "framer-motion";
 import {
   Sparkles, Users, DollarSign, Target, TrendingUp, Heart,
-  MapPin, Calendar, ArrowRight, Trophy, MessageSquare
+  MapPin, Calendar, ArrowRight, Trophy, MessageSquare, ThumbsUp
 } from "lucide-react";
 import { useListInitiatives } from "@workspace/api-client-react";
-import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { TrustScoreBadge } from "@/components/TrustScoreBadge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Dashboard() {
-  const { user } = useAuth();
   const { data: initiatives, isLoading } = useListInitiatives({});
   const [leaderboardTab, setLeaderboardTab] = useState("volunteers");
+  const [likedIds, setLikedIds] = useState<Set<number>>(new Set());
+  const { toast } = useToast();
 
   const totalVolunteers = initiatives?.reduce((sum, i) => sum + i.volunteerCount, 0) ?? 0;
   const totalFunding = initiatives?.reduce((sum, i) => sum + i.fundingRaised, 0) ?? 0;
   const activeCount = initiatives?.filter((i) => i.status === "active").length ?? 0;
+  const completedCount = initiatives?.filter((i) => i.status === "completed").length ?? 0;
 
   const topVolunteerInitiatives = [...(initiatives ?? [])].sort((a, b) => b.volunteerCount - a.volunteerCount).slice(0, 5);
   const topFundedInitiatives = [...(initiatives ?? [])].sort((a, b) => b.fundingRaised - a.fundingRaised).slice(0, 5);
+
+  const handleLike = (id: number, title: string) => {
+    setLikedIds((prev) => new Set(prev).add(id));
+    toast({ title: "Liked!", description: `You liked "${title.split(":")[0]}"` });
+  };
 
   return (
     <div className="min-h-screen bg-background pt-24 pb-20">
@@ -37,9 +44,9 @@ export default function Dashboard() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
               <h1 className="text-3xl md:text-4xl font-bold">
-                Welcome back, <span className="text-gradient">{user?.name?.split(" ")[0] || "Changemaker"}</span>
+                Impact <span className="text-gradient">Dashboard</span>
               </h1>
-              <p className="text-muted-foreground mt-1">Your impact dashboard — track missions, updates, and community progress.</p>
+              <p className="text-muted-foreground mt-1">Track missions, updates, and community progress in real time.</p>
             </div>
             <Link href="/initiatives/new">
               <Button size="lg" className="rounded-full shadow-lg shadow-primary/20">
@@ -52,9 +59,9 @@ export default function Dashboard() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
           {[
             { label: "Active Missions", value: activeCount, icon: Target, color: "text-primary" },
-            { label: "Total Volunteers", value: totalVolunteers, icon: Users, color: "text-blue-500" },
-            { label: "Funds Raised", value: `$${(totalFunding / 1000).toFixed(1)}k`, icon: DollarSign, color: "text-emerald-500" },
-            { label: "Impact Score", value: initiatives?.reduce((sum, i) => sum + (i.trustScore?.overall ?? 0), 0) ?? 0, icon: TrendingUp, color: "text-amber-500" },
+            { label: "Total Volunteers", value: `${totalVolunteers}+`, icon: Users, color: "text-blue-500" },
+            { label: "Funds Raised", value: `$${(totalFunding / 1000).toFixed(0)}k+`, icon: DollarSign, color: "text-emerald-500" },
+            { label: "Completed", value: completedCount, icon: Trophy, color: "text-amber-500" },
           ].map((stat, i) => (
             <motion.div
               key={stat.label}
@@ -99,8 +106,9 @@ export default function Dashboard() {
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {initiatives?.slice(0, 5).map((initiative, idx) => {
+                  {initiatives?.filter(i => i.status === "active").slice(0, 6).map((initiative, idx) => {
                     const progress = Math.min((initiative.fundingRaised / initiative.fundingGoal) * 100, 100);
+                    const isLiked = likedIds.has(initiative.id);
                     return (
                       <motion.div
                         key={initiative.id}
@@ -108,38 +116,52 @@ export default function Dashboard() {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: idx * 0.05 }}
                       >
-                        <Link href={`/initiatives/${initiative.id}`}>
-                          <Card className="rounded-2xl border-border/50 hover:shadow-lg hover:-translate-y-0.5 transition-all cursor-pointer bg-white">
-                            <CardContent className="p-5">
-                              <div className="flex items-start justify-between gap-4">
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center gap-2 mb-1">
-                                    <Badge variant="secondary" className="text-xs capitalize rounded-full">
-                                      {initiative.category}
-                                    </Badge>
-                                    <Badge variant="outline" className="text-xs capitalize rounded-full">
-                                      {initiative.status}
-                                    </Badge>
-                                  </div>
-                                  <h3 className="font-semibold text-base truncate">{initiative.title}</h3>
-                                  <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-                                    <span className="flex items-center gap-1">
-                                      <Users className="w-3.5 h-3.5" /> {initiative.volunteerCount}
-                                    </span>
-                                    <span className="flex items-center gap-1">
-                                      <DollarSign className="w-3.5 h-3.5" /> ${initiative.fundingRaised.toLocaleString()}
-                                    </span>
-                                  </div>
-                                  <div className="mt-3">
-                                    <Progress value={progress} className="h-2 rounded-full" />
-                                    <p className="text-xs text-muted-foreground mt-1">{Math.round(progress)}% funded</p>
-                                  </div>
+                        <Card className="rounded-2xl border-border/50 hover:shadow-lg hover:-translate-y-0.5 transition-all bg-white">
+                          <CardContent className="p-5">
+                            <div className="flex items-start justify-between gap-4">
+                              <Link href={`/initiatives/${initiative.id}`} className="flex-1 min-w-0 cursor-pointer">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <Badge variant="secondary" className="text-xs capitalize rounded-full">
+                                    {initiative.category}
+                                  </Badge>
+                                  <Badge variant="outline" className="text-xs capitalize rounded-full">
+                                    {initiative.lifecycleStage.replace("_", " ")}
+                                  </Badge>
                                 </div>
-                                <TrustScoreBadge score={initiative.trustScore} />
+                                <h3 className="font-semibold text-base hover:text-primary transition-colors">{initiative.title}</h3>
+                                <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                                  <span className="flex items-center gap-1">
+                                    <Users className="w-3.5 h-3.5" /> {initiative.volunteerCount}
+                                  </span>
+                                  <span className="flex items-center gap-1">
+                                    <DollarSign className="w-3.5 h-3.5" /> ${initiative.fundingRaised.toLocaleString()}
+                                  </span>
+                                  <span className="flex items-center gap-1">
+                                    <MapPin className="w-3.5 h-3.5" /> {initiative.location?.split(",")[0]}
+                                  </span>
+                                </div>
+                                <div className="mt-3">
+                                  <Progress value={progress} className="h-2 rounded-full" />
+                                  <p className="text-xs text-muted-foreground mt-1">{Math.round(progress)}% funded</p>
+                                </div>
+                              </Link>
+                              <div className="flex flex-col items-center gap-2">
+                                <TrustScoreBadge score={initiative.trustScore?.overall ?? 0} />
+                                <button
+                                  onClick={() => handleLike(initiative.id, initiative.title)}
+                                  className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full transition-all ${
+                                    isLiked
+                                      ? "bg-red-50 text-red-500"
+                                      : "hover:bg-muted/50 text-muted-foreground hover:text-red-500"
+                                  }`}
+                                >
+                                  <Heart className={`w-3.5 h-3.5 ${isLiked ? "fill-red-500" : ""}`} />
+                                  {isLiked ? "Liked" : "Like"}
+                                </button>
                               </div>
-                            </CardContent>
-                          </Card>
-                        </Link>
+                            </div>
+                          </CardContent>
+                        </Card>
                       </motion.div>
                     );
                   })}
@@ -152,7 +174,7 @@ export default function Dashboard() {
                 <MessageSquare className="w-5 h-5 text-blue-500" /> Impact Updates
               </h2>
               <div className="space-y-4">
-                {initiatives?.slice(0, 3).map((initiative) => (
+                {initiatives?.slice(0, 4).map((initiative) => (
                   <Card key={`update-${initiative.id}`} className="rounded-2xl border-border/50 bg-white">
                     <CardContent className="p-5">
                       <div className="flex items-start gap-4">
@@ -170,13 +192,25 @@ export default function Dashboard() {
                             </h4>
                           </Link>
                           <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                            Exciting progress on this initiative. Community engagement is growing and milestones are being reached.
+                            Exciting progress on this initiative. Community engagement is growing and milestones are being reached ahead of schedule.
                           </p>
                           <div className="flex items-center gap-4 mt-3">
-                            <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors">
-                              <Heart className="w-3.5 h-3.5" /> Like
+                            <button
+                              onClick={() => {
+                                handleLike(initiative.id, initiative.title);
+                              }}
+                              className={`flex items-center gap-1 text-xs transition-colors ${
+                                likedIds.has(initiative.id)
+                                  ? "text-red-500"
+                                  : "text-muted-foreground hover:text-red-500"
+                              }`}
+                            >
+                              <Heart className={`w-3.5 h-3.5 ${likedIds.has(initiative.id) ? "fill-red-500" : ""}`} /> Like
                             </button>
-                            <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors">
+                            <button
+                              onClick={() => toast({ title: "Coming soon", description: "Comments will be available in the next update." })}
+                              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
+                            >
                               <MessageSquare className="w-3.5 h-3.5" /> Comment
                             </button>
                           </div>
@@ -191,34 +225,6 @@ export default function Dashboard() {
 
           <div className="space-y-6">
             <Card className="rounded-2xl border-border/50 bg-white">
-              <CardHeader className="pb-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">
-                    {user?.name?.charAt(0) || "U"}
-                  </div>
-                  <div>
-                    <h3 className="font-semibold">{user?.name}</h3>
-                    <p className="text-xs text-muted-foreground capitalize">{user?.role}</p>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="pt-0">
-                {user?.skills && (
-                  <div className="flex flex-wrap gap-1.5 mb-3">
-                    {user.skills.split(", ").map((skill) => (
-                      <Badge key={skill} variant="secondary" className="text-xs rounded-full">
-                        {skill}
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-                {user?.bio && (
-                  <p className="text-sm text-muted-foreground">{user.bio}</p>
-                )}
-              </CardContent>
-            </Card>
-
-            <Card className="rounded-2xl border-border/50 bg-white">
               <CardHeader className="pb-2">
                 <h3 className="font-semibold flex items-center gap-2">
                   <Trophy className="w-4 h-4 text-amber-500" /> Leaderboard
@@ -227,14 +233,16 @@ export default function Dashboard() {
               <CardContent className="pt-0">
                 <Tabs value={leaderboardTab} onValueChange={setLeaderboardTab}>
                   <TabsList className="w-full rounded-xl mb-3">
-                    <TabsTrigger value="volunteers" className="flex-1 rounded-lg text-xs">Volunteers</TabsTrigger>
+                    <TabsTrigger value="volunteers" className="flex-1 rounded-lg text-xs">Top Volunteers</TabsTrigger>
                     <TabsTrigger value="donors" className="flex-1 rounded-lg text-xs">Top Funded</TabsTrigger>
                   </TabsList>
                   <TabsContent value="volunteers" className="space-y-2">
                     {topVolunteerInitiatives.map((init, i) => (
                       <Link key={init.id} href={`/initiatives/${init.id}`}>
                         <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer">
-                          <span className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+                          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                            i === 0 ? "bg-amber-100 text-amber-600" : i === 1 ? "bg-gray-100 text-gray-600" : i === 2 ? "bg-orange-100 text-orange-600" : "bg-primary/10 text-primary"
+                          }`}>
                             {i + 1}
                           </span>
                           <div className="flex-1 min-w-0">
@@ -249,7 +257,9 @@ export default function Dashboard() {
                     {topFundedInitiatives.map((init, i) => (
                       <Link key={init.id} href={`/initiatives/${init.id}`}>
                         <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer">
-                          <span className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-xs font-bold text-emerald-600">
+                          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                            i === 0 ? "bg-emerald-100 text-emerald-600" : i === 1 ? "bg-emerald-50 text-emerald-500" : "bg-muted text-muted-foreground"
+                          }`}>
                             {i + 1}
                           </span>
                           <div className="flex-1 min-w-0">
@@ -268,12 +278,27 @@ export default function Dashboard() {
               <CardContent className="p-5 text-center">
                 <Sparkles className="w-8 h-8 text-primary mx-auto mb-3" />
                 <h3 className="font-semibold mb-1">Ready to lead?</h3>
-                <p className="text-sm text-muted-foreground mb-4">Use AI to structure your next initiative</p>
+                <p className="text-sm text-muted-foreground mb-4">Use AI to structure your next initiative in seconds</p>
                 <Link href="/initiatives/new">
                   <Button className="rounded-full w-full">
                     <Sparkles className="w-4 h-4 mr-2" /> Start with AI
                   </Button>
                 </Link>
+              </CardContent>
+            </Card>
+
+            <Card className="rounded-2xl border-border/50 bg-white">
+              <CardContent className="p-5">
+                <h3 className="font-semibold text-sm mb-3">Categories</h3>
+                <div className="flex flex-wrap gap-2">
+                  {["Education", "Environment", "Healthcare", "Community", "Women Empowerment", "Rural Development"].map((cat) => (
+                    <Link key={cat} href="/initiatives">
+                      <Badge variant="secondary" className="rounded-full cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors">
+                        {cat}
+                      </Badge>
+                    </Link>
+                  ))}
+                </div>
               </CardContent>
             </Card>
           </div>

@@ -28,6 +28,8 @@ const CATEGORIES = [
   { value: "environment", label: "Environment" },
   { value: "healthcare", label: "Healthcare" },
   { value: "community", label: "Community" },
+  { value: "women empowerment", label: "Women Empowerment" },
+  { value: "rural development", label: "Rural Development" },
 ];
 
 const formSchema = z.object({

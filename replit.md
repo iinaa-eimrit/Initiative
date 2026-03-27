@@ -27,10 +27,11 @@ An AI-powered social impact execution platform. Users describe an idea and AI ge
 - Impact Proof Feed: timeline of initiative updates with evidence of progress
 - AI Volunteer Matching: suggested volunteers with skill-based matching and explanations
 - Initiative Lifecycle: visual stage tracker (Idea → Planning → Active → Impact Delivered)
-- Authentication: signup/login with bcrypt+JWT, auth context, auth-aware navbar
-- Post-login Dashboard: welcome header, stats grid, active missions feed, impact updates, leaderboard, profile card
-- Landing page: hero, How It Works (4 steps), Active Initiatives (live from API), Impact Stats, 6 feature cards, auth-aware CTAs
-- Initiative feed with search, category filters, trust scores, and lifecycle badges
+- Demo-first experience: no authentication required, all features accessible instantly
+- Landing page: hero, Impact Stats, How It Works (4 steps), Active Initiatives (live from API), Completed Missions, 6 feature cards, CTAs
+- Impact Dashboard: stats grid (active/volunteers/funds/completed), active missions feed with Like buttons, impact updates, leaderboard (top volunteers/top funded), category badges
+- Initiative feed with search, 6 category filters (education, environment, healthcare, community, women empowerment, rural development), trust scores, lifecycle badges
+- 14 diverse seeded initiatives across 6 categories, 4 lifecycle stages, real-world locations
 - Initiative detail page with structured plan, milestones, updates, volunteer suggestions
 - Donor leaderboard, volunteer signup, donation forms
 

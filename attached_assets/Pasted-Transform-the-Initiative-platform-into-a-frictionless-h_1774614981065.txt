@@ -1,0 +1,200 @@
+Transform the Initiative platform into a frictionless hackathon demo experience.
+
+IMPORTANT:
+This is a demo-first product. Remove all unnecessary friction and make the app instantly usable without authentication.
+
+====================================
+PRIMARY GOAL
+====================================
+
+Create a highly engaging, realistic, and beautiful interactive demo where users can:
+
+- Instantly explore initiatives
+- Start an initiative without login
+- Experience AI mission generation
+- Interact with missions (volunteer, donate, like)
+
+====================================
+1. REMOVE AUTHENTICATION
+====================================
+
+- Remove sign in / sign up requirement
+- Allow all actions in demo mode
+- Simulate user actions (volunteer, donate, like)
+
+====================================
+2. LANDING PAGE (HIGH IMPACT)
+====================================
+
+Design a premium landing page with:
+
+- Hero:
+  "Turn ideas into real-world impact"
+  CTA: "Start an Initiative"
+
+- Secondary CTA:
+  "Explore Live Initiatives"
+
+- Sections:
+  - Active initiatives preview
+  - Completed missions
+  - Impact stats (mock but realistic)
+  - How it works (simple 4 steps)
+
+- Add emotional imagery placeholders
+
+====================================
+3. AI INITIATIVE CREATION (CORE)
+====================================
+
+User clicks "Start an Initiative":
+
+- Input idea text
+- Generate AI structured mission
+- Show preview
+- Allow "Launch Initiative"
+
+No login required.
+
+====================================
+4. SEEDED INITIATIVE DATA (CRITICAL)
+====================================
+
+Create 12–15 realistic initiatives.
+
+Include diversity:
+
+Categories:
+- Education
+- Environment
+- Healthcare
+- Community
+- Women empowerment
+- Rural development
+
+Stages:
+- Planning
+- Active
+- Near completion
+- Completed
+
+Each initiative must include:
+
+- Title
+- Description
+- Location (real cities)
+- Volunteers (3–20)
+- Donations (realistic values)
+- Milestones (3–5)
+- Trust score (varied)
+- Updates timeline (3–6 entries)
+- Images (placeholder URLs)
+
+Ensure data feels real and varied.
+
+====================================
+5. DASHBOARD (NO LOGIN)
+====================================
+
+Main sections:
+
+A. Initiatives Feed
+
+Cards show:
+- Title
+- Category
+- Trust score
+- Progress %
+- Volunteers
+- Budget
+
+Actions:
+- View
+- Volunteer
+- Donate
+- Like
+
+All actions simulate success.
+
+------------------------------------
+
+B. Impact Updates Feed
+
+Each update:
+- Image
+- Caption
+- Location
+
+------------------------------------
+
+C. Leaderboard
+
+- Top volunteers
+- Top donors
+- Filters:
+  Weekly / Monthly / Global
+
+====================================
+6. INITIATIVE DETAIL PAGE
+====================================
+
+Show:
+
+- Mission overview
+- AI structured plan
+- Milestones
+- Trust score
+- Budget progress
+- Volunteers
+- Updates timeline
+
+Actions:
+
+- Volunteer (simulate join)
+- Donate (simulate success)
+- Like / Comment
+- Report
+
+====================================
+7. INTERACTION SIMULATION
+====================================
+
+All actions must give feedback:
+
+- "You joined this initiative"
+- "Donation successful"
+- "Liked"
+
+No backend persistence required.
+
+====================================
+8. DESIGN REQUIREMENTS
+====================================
+
+- Modern, clean, premium UI
+- Emotional storytelling
+- Smooth transitions
+- Avoid empty states
+- Rich visual content
+
+====================================
+9. DEMO OPTIMIZATION
+====================================
+
+- No blank screens
+- Fast loading
+- Smooth navigation
+- Realistic data everywhere
+
+====================================
+OUTPUT
+====================================
+
+Ensure:
+
+- App feels alive and real
+- No authentication friction
+- Strong demo experience
+- Judges can explore easily
+
+Explain how seeded data is structured and how demo flow works.

@@ -11,14 +11,16 @@ import { Progress } from "@/components/ui/progress";
 import { TrustScoreBadge } from "@/components/TrustScoreBadge";
 import { LifecycleBadge } from "@/components/LifecycleBadge";
 
-const CATEGORIES = ["All", "environment", "education", "healthcare", "community"];
+const CATEGORIES = ["All", "education", "environment", "healthcare", "community", "women empowerment", "rural development"];
 
 const categoryLabels: Record<string, string> = {
   All: "All",
-  environment: "Environment",
   education: "Education",
+  environment: "Environment",
   healthcare: "Healthcare",
   community: "Community",
+  "women empowerment": "Women Empowerment",
+  "rural development": "Rural Development",
 };
 
 export default function Initiatives() {
