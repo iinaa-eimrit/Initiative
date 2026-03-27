@@ -64,11 +64,12 @@ interface TrustBreakdownProps {
 }
 
 export function TrustBreakdown({ breakdown, overall }: TrustBreakdownProps) {
+  if (!breakdown) return null;
   const categories = [
-    { label: "Updates", score: breakdown.updatesScore, max: 25, color: "bg-purple-500" },
-    { label: "Milestones", score: breakdown.milestonesScore, max: 30, color: "bg-blue-500" },
-    { label: "Volunteers", score: breakdown.volunteersScore, max: 20, color: "bg-teal-500" },
-    { label: "Funding", score: breakdown.fundingScore, max: 25, color: "bg-green-500" },
+    { label: "Updates", score: breakdown.updatesScore ?? 0, max: 25, color: "bg-purple-500" },
+    { label: "Milestones", score: breakdown.milestonesScore ?? 0, max: 30, color: "bg-blue-500" },
+    { label: "Volunteers", score: breakdown.volunteersScore ?? 0, max: 20, color: "bg-teal-500" },
+    { label: "Funding", score: breakdown.fundingScore ?? 0, max: 25, color: "bg-green-500" },
   ];
 
   const overallColors = getScoreColor(overall);

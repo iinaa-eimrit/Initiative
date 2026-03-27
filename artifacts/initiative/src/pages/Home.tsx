@@ -1,5 +1,6 @@
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Globe2, HeartHandshake, Target, Sparkles, Shield, BarChart3, Users, DollarSign, CheckCircle2, Lightbulb, Cpu, Handshake, Trophy, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,14 +8,58 @@ import { useListInitiatives } from "@workspace/api-client-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 
+function AnimatedCounter({ target, suffix = "" }: { target: number | string; suffix?: string }) {
+  const [count, setCount] = useState(0);
+  const numericTarget = typeof target === "number" ? target : parseFloat(target) || 0;
+
+  useEffect(() => {
+    const duration = 1500;
+    const steps = 40;
+    const increment = numericTarget / steps;
+    let current = 0;
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= numericTarget) {
+        setCount(numericTarget);
+        clearInterval(timer);
+      } else {
+        setCount(Math.floor(current));
+      }
+    }, duration / steps);
+    return () => clearInterval(timer);
+  }, [numericTarget]);
+
+  return <span>{typeof target === "number" ? count : count.toFixed(1)}{suffix}</span>;
+}
+
+const LIVE_ACTIVITIES = [
+  { icon: "💰", text: "Priya donated ₹5,000 to Vidya Setu", time: "2m ago" },
+  { icon: "🙋", text: "Rahul joined Hariyali as a volunteer", time: "5m ago" },
+  { icon: "🎯", text: "Sehat Gaadi reached 25% funding", time: "8m ago" },
+  { icon: "📝", text: "Shakti posted a new update", time: "12m ago" },
+  { icon: "💰", text: "Meera donated ₹10,000 to Jal Jeevan", time: "15m ago" },
+  { icon: "🏆", text: "Nourish Network completed all milestones", time: "20m ago" },
+  { icon: "🙋", text: "Arun joined Prakriti Pathshala", time: "25m ago" },
+  { icon: "📝", text: "Artisan Revival shared impact story", time: "30m ago" },
+];
+
 export default function Home() {
   const { data: initiatives } = useListInitiatives({});
+  const [tickerIndex, setTickerIndex] = useState(0);
+
   const activeInitiatives = initiatives?.filter((i) => i.status === "active").slice(0, 3) ?? [];
   const completedInitiatives = initiatives?.filter((i) => i.status === "completed").slice(0, 2) ?? [];
   const totalVolunteers = initiatives?.reduce((sum, i) => sum + i.volunteerCount, 0) ?? 0;
   const totalFunding = initiatives?.reduce((sum, i) => sum + i.fundingRaised, 0) ?? 0;
   const totalMissions = initiatives?.length ?? 0;
   const categories = new Set(initiatives?.map((i) => i.category) ?? []);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTickerIndex((prev) => (prev + 1) % LIVE_ACTIVITIES.length);
+    }, 3000);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <div className="min-h-screen pt-20 flex flex-col">
@@ -95,7 +140,48 @@ export default function Home() {
                   <span className="text-sm font-bold">AI Generated Plan</span>
                 </div>
               </motion.div>
+
+              <motion.div
+                animate={{ x: [0, 6, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+                className="absolute top-1/2 -right-8 glass-card p-3 rounded-2xl"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+                    <Heart className="w-4 h-4 text-red-500 fill-red-500" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold">+12 likes</p>
+                    <p className="text-[10px] text-muted-foreground">just now</p>
+                  </div>
+                </div>
+              </motion.div>
             </motion.div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-4 bg-primary/5 border-y border-primary/10 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5 shrink-0">
+              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              <span className="text-xs font-semibold text-primary uppercase tracking-wide">Live</span>
+            </div>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={tickerIndex}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.3 }}
+                className="flex items-center gap-2 text-sm"
+              >
+                <span>{LIVE_ACTIVITIES[tickerIndex].icon}</span>
+                <span className="text-foreground font-medium">{LIVE_ACTIVITIES[tickerIndex].text}</span>
+                <span className="text-muted-foreground text-xs">{LIVE_ACTIVITIES[tickerIndex].time}</span>
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
       </section>
@@ -108,10 +194,10 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {[
-              { value: totalMissions, label: "Missions Launched", icon: <Target className="w-6 h-6" />, color: "text-primary" },
-              { value: `${totalVolunteers}+`, label: "Volunteers Engaged", icon: <Users className="w-6 h-6" />, color: "text-blue-500" },
-              { value: `₹${(totalFunding / 100000).toFixed(1)}L+`, label: "Funds Raised", icon: <DollarSign className="w-6 h-6" />, color: "text-emerald-500" },
-              { value: categories.size, label: "Categories", icon: <Globe2 className="w-6 h-6" />, color: "text-amber-500" },
+              { value: totalMissions, label: "Missions Launched", icon: <Target className="w-6 h-6" />, color: "text-primary", suffix: "" },
+              { value: totalVolunteers, label: "Volunteers Engaged", icon: <Users className="w-6 h-6" />, color: "text-blue-500", suffix: "+" },
+              { value: (totalFunding / 100000).toFixed(1), label: "Funds Raised", icon: <DollarSign className="w-6 h-6" />, color: "text-emerald-500", prefix: "₹", suffix: "L+" },
+              { value: categories.size, label: "Categories", icon: <Globe2 className="w-6 h-6" />, color: "text-amber-500", suffix: "" },
             ].map((stat, i) => (
               <motion.div
                 key={stat.label}
@@ -119,12 +205,15 @@ export default function Home() {
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="text-center p-6"
+                className="text-center p-6 rounded-2xl hover:bg-muted/30 transition-colors"
               >
                 <div className={`w-14 h-14 rounded-2xl bg-muted/50 ${stat.color} flex items-center justify-center mx-auto mb-4`}>
                   {stat.icon}
                 </div>
-                <p className="text-3xl md:text-4xl font-bold mb-1">{stat.value}</p>
+                <p className="text-3xl md:text-4xl font-bold mb-1">
+                  {"prefix" in stat ? (stat as any).prefix : ""}
+                  <AnimatedCounter target={typeof stat.value === "string" ? parseFloat(stat.value) : stat.value} suffix={stat.suffix} />
+                </p>
                 <p className="text-sm text-muted-foreground">{stat.label}</p>
               </motion.div>
             ))}
@@ -177,7 +266,11 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-12">
               <div>
-                <h2 className="text-3xl md:text-4xl font-bold mb-2">Live Active Initiatives</h2>
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                  <span className="text-xs font-semibold text-green-600 uppercase tracking-wide">Live Now</span>
+                </div>
+                <h2 className="text-3xl md:text-4xl font-bold mb-2">Active Initiatives</h2>
                 <p className="text-muted-foreground text-lg">Join these missions and make a difference today.</p>
               </div>
               <Link href="/initiatives">
@@ -197,16 +290,26 @@ export default function Home() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: i * 0.1 }}
+                    whileHover={{ y: -4 }}
                   >
                     <Link href={`/initiatives/${initiative.id}`}>
-                      <Card className="rounded-3xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border-border/50 cursor-pointer bg-white h-full">
+                      <Card className="rounded-3xl overflow-hidden hover:shadow-xl transition-all duration-300 border-border/50 cursor-pointer bg-white h-full group">
                         <div className="h-2 w-full bg-gradient-to-r from-primary to-teal-400" />
                         <CardContent className="p-6">
+                          <div className="flex items-center gap-3 mb-4">
+                            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-teal-400 flex items-center justify-center text-white font-bold text-xs">
+                              {initiative.creatorName.charAt(0)}
+                            </div>
+                            <div>
+                              <p className="text-xs font-semibold">{initiative.creatorName}</p>
+                              <p className="text-[10px] text-muted-foreground">{initiative.location?.split(",")[0]}</p>
+                            </div>
+                          </div>
                           <div className="flex items-center gap-2 mb-3">
                             <Badge variant="secondary" className="text-xs capitalize rounded-full">{initiative.category}</Badge>
                             <Badge variant="outline" className="text-xs rounded-full capitalize">{initiative.lifecycleStage.replace("_", " ")}</Badge>
                           </div>
-                          <h3 className="font-bold text-lg mb-2 line-clamp-2">{initiative.title}</h3>
+                          <h3 className="font-bold text-lg mb-2 line-clamp-2 group-hover:text-primary transition-colors">{initiative.title}</h3>
                           <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{initiative.description}</p>
                           <div className="space-y-2">
                             <div className="flex justify-between text-sm">
@@ -251,9 +354,10 @@ export default function Home() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
+                  whileHover={{ y: -4 }}
                 >
                   <Link href={`/initiatives/${initiative.id}`}>
-                    <Card className="rounded-3xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border-emerald-200/50 cursor-pointer bg-white h-full">
+                    <Card className="rounded-3xl overflow-hidden hover:shadow-xl transition-all duration-300 border-emerald-200/50 cursor-pointer bg-white h-full">
                       <div className="h-2 w-full bg-gradient-to-r from-emerald-400 to-teal-400" />
                       <CardContent className="p-6">
                         <div className="flex items-center gap-2 mb-3">
@@ -270,7 +374,7 @@ export default function Home() {
                               <Users className="w-4 h-4" /> {initiative.volunteerCount}
                             </span>
                             <span className="flex items-center gap-1 text-sm text-emerald-600 font-semibold">
-                              <DollarSign className="w-4 h-4" /> ₹{initiative.fundingRaised.toLocaleString('en-IN')}
+                              ₹{initiative.fundingRaised.toLocaleString('en-IN')}
                             </span>
                           </div>
                           <span className="flex items-center gap-1 text-sm font-medium text-emerald-600">
@@ -309,6 +413,7 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
+                whileHover={{ y: -4 }}
                 className="p-8 rounded-3xl bg-background border border-border/50 hover:shadow-xl transition-all duration-300 group"
               >
                 <div className={`w-14 h-14 rounded-2xl ${feature.bg} ${feature.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>

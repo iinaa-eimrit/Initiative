@@ -100,8 +100,8 @@ Every package extends `tsconfig.base.json` which sets `composite: true`. The roo
 
 React + Vite frontend for the Initiative platform.
 
-- Pages: Home (landing), Initiatives (feed), CreateInitiative (AI + manual), InitiativeDetail, Login, Signup, Dashboard
-- Components: Navbar (auth-aware), TrustScoreBadge, TrustBreakdown, LifecycleBadge, LifecycleTracker, ui/ (shadcn-style)
+- Pages: Home (landing with animated counters, live activity ticker, floating cards), Initiatives (social impact feed with StoryBar, post cards, Like/Comment/Share/Join/Donate), CreateInitiative (AI + manual), InitiativeDetail (sticky action bar, tab layout: Overview/Updates/Volunteers/Impact/Blog), Login, Signup, Dashboard (card leaderboard with medals, trending hashtags, social proof widget)
+- Components: Navbar (auth-aware), StoryBar (Instagram-style circular avatar stories), TrustScoreBadge, TrustBreakdown, LifecycleBadge, LifecycleTracker, ui/ (shadcn-style with custom Progress indicatorClassName support)
 - Hooks: useAuth (JWT auth context with setAuthTokenGetter)
 - Uses React Query hooks from `@workspace/api-client-react`
 - Routing via `wouter`

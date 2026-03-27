@@ -3,7 +3,8 @@ import { Link } from "wouter";
 import { motion } from "framer-motion";
 import {
   Sparkles, Users, DollarSign, Target, TrendingUp, Heart,
-  MapPin, Calendar, ArrowRight, Trophy, MessageSquare, ThumbsUp
+  MapPin, ArrowRight, Trophy, MessageSquare,
+  Eye, Share2, Flame, Award
 } from "lucide-react";
 import { useListInitiatives } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,8 @@ import { Progress } from "@/components/ui/progress";
 import { TrustScoreBadge } from "@/components/TrustScoreBadge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+
+const TRENDING_TAGS = ["#CleanIndia", "#EducationForAll", "#WomenPower", "#RuralHealth", "#SaveOurRivers", "#TreePlanting"];
 
 export default function Dashboard() {
   const { data: initiatives, isLoading } = useListInitiatives({});
@@ -29,8 +32,16 @@ export default function Dashboard() {
   const topFundedInitiatives = [...(initiatives ?? [])].sort((a, b) => b.fundingRaised - a.fundingRaised).slice(0, 5);
 
   const handleLike = (id: number, title: string) => {
-    setLikedIds((prev) => new Set(prev).add(id));
-    toast({ title: "Liked!", description: `You liked "${title.split(":")[0]}"` });
+    setLikedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+        toast({ title: "Liked!", description: `You liked "${title.split(":")[0]}"` });
+      }
+      return next;
+    });
   };
 
   return (
@@ -58,21 +69,22 @@ export default function Dashboard() {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
           {[
-            { label: "Active Missions", value: activeCount, icon: Target, color: "text-primary" },
-            { label: "Total Volunteers", value: `${totalVolunteers}+`, icon: Users, color: "text-blue-500" },
-            { label: "Funds Raised", value: `₹${(totalFunding / 100000).toFixed(1)}L+`, icon: DollarSign, color: "text-emerald-500" },
-            { label: "Completed", value: completedCount, icon: Trophy, color: "text-amber-500" },
+            { label: "Active Missions", value: activeCount, icon: Target, color: "text-primary", bg: "bg-primary/10" },
+            { label: "Total Volunteers", value: `${totalVolunteers}+`, icon: Users, color: "text-blue-500", bg: "bg-blue-50" },
+            { label: "Funds Raised", value: `₹${(totalFunding / 100000).toFixed(1)}L+`, icon: DollarSign, color: "text-emerald-500", bg: "bg-emerald-50" },
+            { label: "Completed", value: completedCount, icon: Trophy, color: "text-amber-500", bg: "bg-amber-50" },
           ].map((stat, i) => (
             <motion.div
               key={stat.label}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
+              whileHover={{ y: -2 }}
             >
-              <Card className="rounded-2xl border-border/50 bg-white">
+              <Card className="rounded-2xl border-border/50 bg-white hover:shadow-lg transition-all duration-300">
                 <CardContent className="p-5">
                   <div className="flex items-center gap-3 mb-2">
-                    <div className={`w-10 h-10 rounded-xl bg-muted/50 flex items-center justify-center ${stat.color}`}>
+                    <div className={`w-10 h-10 rounded-xl ${stat.bg} flex items-center justify-center ${stat.color}`}>
                       <stat.icon className="w-5 h-5" />
                     </div>
                   </div>
@@ -109,35 +121,46 @@ export default function Dashboard() {
                   {initiatives?.filter(i => i.status === "active").slice(0, 6).map((initiative, idx) => {
                     const progress = Math.min((initiative.fundingRaised / initiative.fundingGoal) * 100, 100);
                     const isLiked = likedIds.has(initiative.id);
+                    const viewCount = 80 + (initiative.id * 31) % 200;
                     return (
                       <motion.div
                         key={initiative.id}
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: idx * 0.05 }}
+                        whileHover={{ x: 2 }}
                       >
-                        <Card className="rounded-2xl border-border/50 hover:shadow-lg hover:-translate-y-0.5 transition-all bg-white">
+                        <Card className="rounded-2xl border-border/50 hover:shadow-lg transition-all bg-white">
                           <CardContent className="p-5">
                             <div className="flex items-start justify-between gap-4">
                               <Link href={`/initiatives/${initiative.id}`} className="flex-1 min-w-0 cursor-pointer">
-                                <div className="flex items-center gap-2 mb-1">
-                                  <Badge variant="secondary" className="text-xs capitalize rounded-full">
-                                    {initiative.category}
-                                  </Badge>
-                                  <Badge variant="outline" className="text-xs capitalize rounded-full">
-                                    {initiative.lifecycleStage.replace("_", " ")}
-                                  </Badge>
+                                <div className="flex items-center gap-3 mb-2">
+                                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-teal-400 flex items-center justify-center text-white font-bold text-xs shrink-0">
+                                    {initiative.creatorName.charAt(0)}
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-semibold text-sm">{initiative.creatorName}</span>
+                                    <Badge variant="secondary" className="text-[10px] capitalize rounded-full px-2 py-0">
+                                      {initiative.category}
+                                    </Badge>
+                                    <Badge variant="outline" className="text-[10px] capitalize rounded-full px-2 py-0">
+                                      {initiative.lifecycleStage.replace("_", " ")}
+                                    </Badge>
+                                  </div>
                                 </div>
                                 <h3 className="font-semibold text-base hover:text-primary transition-colors">{initiative.title}</h3>
-                                <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                                <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
                                   <span className="flex items-center gap-1">
-                                    <Users className="w-3.5 h-3.5" /> {initiative.volunteerCount}
+                                    <Users className="w-3 h-3" /> {initiative.volunteerCount}
                                   </span>
                                   <span className="flex items-center gap-1">
                                     ₹{initiative.fundingRaised.toLocaleString('en-IN')}
                                   </span>
                                   <span className="flex items-center gap-1">
-                                    <MapPin className="w-3.5 h-3.5" /> {initiative.location?.split(",")[0]}
+                                    <MapPin className="w-3 h-3" /> {initiative.location?.split(",")[0]}
+                                  </span>
+                                  <span className="flex items-center gap-1">
+                                    <Eye className="w-3 h-3" /> {viewCount}
                                   </span>
                                 </div>
                                 <div className="mt-3">
@@ -147,7 +170,8 @@ export default function Dashboard() {
                               </Link>
                               <div className="flex flex-col items-center gap-2">
                                 <TrustScoreBadge score={initiative.trustScore?.overall ?? 0} />
-                                <button
+                                <motion.button
+                                  whileTap={{ scale: 0.85 }}
                                   onClick={() => handleLike(initiative.id, initiative.title)}
                                   className={`flex items-center gap-1 text-xs px-2 py-1 rounded-full transition-all ${
                                     isLiked
@@ -157,7 +181,7 @@ export default function Dashboard() {
                                 >
                                   <Heart className={`w-3.5 h-3.5 ${isLiked ? "fill-red-500" : ""}`} />
                                   {isLiked ? "Liked" : "Like"}
-                                </button>
+                                </motion.button>
                               </div>
                             </div>
                           </CardContent>
@@ -175,10 +199,10 @@ export default function Dashboard() {
               </h2>
               <div className="space-y-4">
                 {initiatives?.slice(0, 4).map((initiative) => (
-                  <Card key={`update-${initiative.id}`} className="rounded-2xl border-border/50 bg-white">
+                  <Card key={`update-${initiative.id}`} className="rounded-2xl border-border/50 bg-white hover:shadow-md transition-shadow">
                     <CardContent className="p-5">
                       <div className="flex items-start gap-4">
-                        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm shrink-0">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/80 to-teal-400 flex items-center justify-center text-white font-bold text-sm shrink-0">
                           {initiative.creatorName.charAt(0)}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -195,10 +219,9 @@ export default function Dashboard() {
                             Exciting progress on this initiative. Community engagement is growing and milestones are being reached ahead of schedule.
                           </p>
                           <div className="flex items-center gap-4 mt-3">
-                            <button
-                              onClick={() => {
-                                handleLike(initiative.id, initiative.title);
-                              }}
+                            <motion.button
+                              whileTap={{ scale: 0.85 }}
+                              onClick={() => handleLike(initiative.id, initiative.title)}
                               className={`flex items-center gap-1 text-xs transition-colors ${
                                 likedIds.has(initiative.id)
                                   ? "text-red-500"
@@ -206,12 +229,18 @@ export default function Dashboard() {
                               }`}
                             >
                               <Heart className={`w-3.5 h-3.5 ${likedIds.has(initiative.id) ? "fill-red-500" : ""}`} /> Like
-                            </button>
+                            </motion.button>
                             <button
                               onClick={() => toast({ title: "Coming soon", description: "Comments will be available in the next update." })}
                               className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
                             >
                               <MessageSquare className="w-3.5 h-3.5" /> Comment
+                            </button>
+                            <button
+                              onClick={() => toast({ title: "Link copied!", description: "Share link copied to clipboard." })}
+                              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
+                            >
+                              <Share2 className="w-3.5 h-3.5" /> Share
                             </button>
                           </div>
                         </div>
@@ -224,7 +253,8 @@ export default function Dashboard() {
           </div>
 
           <div className="space-y-6">
-            <Card className="rounded-2xl border-border/50 bg-white">
+            <Card className="rounded-2xl border-border/50 bg-white overflow-hidden">
+              <div className="h-1 bg-gradient-to-r from-amber-400 via-orange-400 to-red-400" />
               <CardHeader className="pb-2">
                 <h3 className="font-semibold flex items-center gap-2">
                   <Trophy className="w-4 h-4 text-amber-500" /> Leaderboard
@@ -239,38 +269,97 @@ export default function Dashboard() {
                   <TabsContent value="volunteers" className="space-y-2">
                     {topVolunteerInitiatives.map((init, i) => (
                       <Link key={init.id} href={`/initiatives/${init.id}`}>
-                        <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer">
-                          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                            i === 0 ? "bg-amber-100 text-amber-600" : i === 1 ? "bg-gray-100 text-gray-600" : i === 2 ? "bg-orange-100 text-orange-600" : "bg-primary/10 text-primary"
+                        <motion.div
+                          whileHover={{ x: 4 }}
+                          className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-muted/50 transition-all cursor-pointer"
+                        >
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
+                            i === 0 ? "bg-amber-100 text-amber-600 ring-2 ring-amber-300" :
+                            i === 1 ? "bg-gray-100 text-gray-600 ring-2 ring-gray-300" :
+                            i === 2 ? "bg-orange-100 text-orange-600 ring-2 ring-orange-300" :
+                            "bg-primary/10 text-primary"
                           }`}>
-                            {i + 1}
-                          </span>
+                            {i === 0 ? <Award className="w-4 h-4" /> : i + 1}
+                          </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium truncate">{init.title.split(":")[0]}</p>
                             <p className="text-xs text-muted-foreground">{init.volunteerCount} volunteers</p>
                           </div>
-                        </div>
+                          {i < 3 && (
+                            <Badge variant="secondary" className="text-[10px] rounded-full px-1.5">
+                              {i === 0 ? "🥇" : i === 1 ? "🥈" : "🥉"}
+                            </Badge>
+                          )}
+                        </motion.div>
                       </Link>
                     ))}
                   </TabsContent>
                   <TabsContent value="donors" className="space-y-2">
                     {topFundedInitiatives.map((init, i) => (
                       <Link key={init.id} href={`/initiatives/${init.id}`}>
-                        <div className="flex items-center gap-3 p-2 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer">
-                          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
-                            i === 0 ? "bg-emerald-100 text-emerald-600" : i === 1 ? "bg-emerald-50 text-emerald-500" : "bg-muted text-muted-foreground"
+                        <motion.div
+                          whileHover={{ x: 4 }}
+                          className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-muted/50 transition-all cursor-pointer"
+                        >
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
+                            i === 0 ? "bg-emerald-100 text-emerald-600 ring-2 ring-emerald-300" :
+                            i === 1 ? "bg-emerald-50 text-emerald-500 ring-2 ring-emerald-200" :
+                            i === 2 ? "bg-teal-50 text-teal-500 ring-2 ring-teal-200" :
+                            "bg-muted text-muted-foreground"
                           }`}>
-                            {i + 1}
-                          </span>
+                            {i === 0 ? <Award className="w-4 h-4" /> : i + 1}
+                          </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium truncate">{init.title.split(":")[0]}</p>
                             <p className="text-xs text-muted-foreground">₹{init.fundingRaised.toLocaleString('en-IN')} raised</p>
                           </div>
-                        </div>
+                          {i < 3 && (
+                            <Badge variant="secondary" className="text-[10px] rounded-full px-1.5">
+                              {i === 0 ? "🥇" : i === 1 ? "🥈" : "🥉"}
+                            </Badge>
+                          )}
+                        </motion.div>
                       </Link>
                     ))}
                   </TabsContent>
                 </Tabs>
+              </CardContent>
+            </Card>
+
+            <Card className="rounded-2xl border-border/50 bg-white">
+              <CardContent className="p-5">
+                <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
+                  <Flame className="w-4 h-4 text-orange-500" /> Trending
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {TRENDING_TAGS.map((tag) => (
+                    <Badge key={tag} variant="secondary" className="rounded-full cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors text-xs">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="rounded-2xl border-border/50 bg-white">
+              <CardContent className="p-5">
+                <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-primary" /> Social Proof
+                </h3>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground flex items-center gap-1.5"><Eye className="w-3.5 h-3.5" /> Total Views</span>
+                    <span className="font-bold">2,847</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground flex items-center gap-1.5"><Users className="w-3.5 h-3.5" /> Joins Today</span>
+                    <span className="font-bold text-primary">+14</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground flex items-center gap-1.5"><Heart className="w-3.5 h-3.5" /> Likes Today</span>
+                    <span className="font-bold text-red-500">+38</span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
 

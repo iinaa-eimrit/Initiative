@@ -1,0 +1,115 @@
+Upgrade the Initiative platform UI to feel like a modern social impact application similar to Instagram + LinkedIn + Kickstarter.
+
+Focus on engagement, emotional storytelling, and social interaction.
+
+====================================
+GOAL
+====================================
+
+Transform the UI from a static dashboard into a dynamic, social, and engaging product.
+
+====================================
+1. IMPACT FEED (MAIN CHANGE)
+====================================
+
+Convert initiative cards into social posts.
+
+Each post must include:
+
+- User avatar + name
+- Initiative title
+- Location
+- Large image
+- Caption
+- Progress bar
+- Trust score badge
+
+Add action buttons:
+
+- Like
+- Comment
+- Share
+- Join
+- Donate
+
+====================================
+2. STORY BAR
+====================================
+
+Add horizontal stories at top:
+
+- Circular avatars
+- Shows recent updates
+- Click opens full-screen story view
+
+====================================
+3. HERO ENHANCEMENT
+====================================
+
+Add:
+
+- Animated stats
+- Live activity ticker
+- Floating interaction cards
+
+====================================
+4. INITIATIVE DETAIL PAGE
+====================================
+
+Upgrade layout:
+
+- Full-width hero image
+- Sticky action bar (Join, Donate, Share)
+- Tabs:
+  Overview, Updates, Volunteers, Impact, Blog
+
+====================================
+5. LEADERBOARD UI
+====================================
+
+Redesign into card-based layout:
+
+- Top donors
+- Top volunteers
+- Highlight with badges
+
+====================================
+6. MICRO-INTERACTIONS
+====================================
+
+Add:
+
+- Button hover animations
+- Card lift on hover
+- Like animation
+- Smooth transitions
+
+====================================
+7. VISUAL STYLE
+====================================
+
+- Premium SaaS + social blend
+- Soft gradients
+- Clean spacing
+- Emotional imagery
+
+====================================
+8. SOCIAL PROOF
+====================================
+
+Display:
+
+- Views
+- Joins
+- Trending tags
+
+====================================
+OUTPUT
+====================================
+
+Ensure UI feels:
+
+- Alive
+- Engaging
+- Social
+- Premium
