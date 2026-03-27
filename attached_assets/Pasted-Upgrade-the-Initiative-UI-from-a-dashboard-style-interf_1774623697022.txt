@@ -1,0 +1,116 @@
+Upgrade the Initiative UI from a dashboard-style interface to an AI-first, emotionally engaging social impact platform.
+
+====================================
+PRIMARY GOAL
+====================================
+
+Make the product feel:
+
+- Alive
+- Human
+- AI-powered
+- Emotionally engaging
+
+====================================
+1. AI-FIRST EXPERIENCE (CRITICAL)
+====================================
+
+Replace top CTA with:
+
+"✨ Generate Initiative with AI"
+
+Add a hero input box:
+
+Placeholder:
+"Describe what you want to change in the world..."
+
+Button:
+"Generate with AI"
+
+Add subtle animation or glow.
+
+====================================
+2. INITIATIVE CARDS → IMPACT STORIES
+====================================
+
+Upgrade all cards to include:
+
+- Image (required)
+- User avatar
+- Initiative title
+- Location
+- Caption (human-style)
+- Progress bar
+- Trust badge
+
+Add actions:
+
+- Like
+- Comment
+- Join
+- Donate
+
+====================================
+3. PROGRESS VISUALIZATION
+====================================
+
+Add animated progress bars:
+
+- Funding progress
+- Completion %
+
+Use primary brand color.
+
+====================================
+4. TRUST INTELLIGENCE
+====================================
+
+Rewrite updates:
+
+Replace generic text with:
+
+- "AI Verified"
+- "Milestone completed"
+- "Funds unlocked"
+
+Make system feel intelligent.
+
+====================================
+5. AVATARS
+====================================
+
+Replace initials with:
+
+- Circular avatars
+- Placeholder profile images
+
+====================================
+6. SOCIAL PROOF
+====================================
+
+Add:
+
+- "X people joined this week"
+- "Trending"
+- "Recently funded"
+
+====================================
+7. MICRO INTERACTIONS
+====================================
+
+Add:
+
+- Card hover lift
+- Button hover scale
+- Like animation
+
+====================================
+OUTPUT
+====================================
+
+Ensure the app feels:
+
+- Social
+- Alive
+- Premium
+- AI-driven

@@ -82,10 +82,34 @@ export default function Home() {
               <p className="text-lg sm:text-xl text-muted-foreground mb-8 leading-relaxed">
                 Describe your idea and let AI structure your initiative. Build trust through milestone funding, recruit volunteers, and track impact transparently.
               </p>
+
+              <div className="mb-6">
+                <div className="relative group">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-primary/30 via-teal-400/30 to-emerald-400/30 rounded-2xl blur-lg opacity-60 group-hover:opacity-100 transition-opacity duration-500 ai-glow" />
+                  <div className="relative flex items-center bg-white rounded-2xl border border-border/50 shadow-lg overflow-hidden">
+                    <Sparkles className="w-5 h-5 text-primary ml-5 shrink-0" />
+                    <input
+                      type="text"
+                      placeholder="Describe what you want to change in the world..."
+                      className="flex-1 h-14 px-4 bg-transparent text-base outline-none placeholder:text-muted-foreground/60"
+                      onFocus={(e) => {
+                        window.location.href = `${import.meta.env.BASE_URL}initiatives/new`;
+                      }}
+                      readOnly
+                    />
+                    <Link href="/initiatives/new">
+                      <Button className="m-2 rounded-xl h-10 px-5 text-sm shadow-md shadow-primary/20">
+                        Generate with AI
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link href="/initiatives/new">
                   <Button size="lg" className="h-14 px-8 text-base rounded-full w-full sm:w-auto shadow-xl shadow-primary/25 hover:-translate-y-1 transition-transform">
-                    Start an Initiative <Sparkles className="ml-2 w-5 h-5" />
+                    <Sparkles className="mr-2 w-5 h-5" /> Generate Initiative with AI
                   </Button>
                 </Link>
                 <Link href="/initiatives">
@@ -441,7 +465,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/initiatives/new">
                 <Button size="lg" className="h-14 px-10 text-base rounded-full shadow-xl shadow-primary/25">
-                  Create an Initiative
+                  Generate Initiative with AI
                 </Button>
               </Link>
               <Link href="/dashboard">

@@ -61,7 +61,7 @@ export default function Dashboard() {
             </div>
             <Link href="/initiatives/new">
               <Button size="lg" className="rounded-full shadow-lg shadow-primary/20">
-                <Sparkles className="w-4 h-4 mr-2" /> Start Initiative
+                <Sparkles className="w-4 h-4 mr-2" /> Generate with AI
               </Button>
             </Link>
           </div>
@@ -198,7 +198,21 @@ export default function Dashboard() {
                 <MessageSquare className="w-5 h-5 text-blue-500" /> Impact Updates
               </h2>
               <div className="space-y-4">
-                {initiatives?.slice(0, 4).map((initiative) => (
+                {initiatives?.slice(0, 4).map((initiative, idx) => {
+                const trustLabels = [
+                  { text: "AI Verified", color: "bg-purple-100 text-purple-700", icon: "🤖" },
+                  { text: "Milestone completed", color: "bg-emerald-100 text-emerald-700", icon: "✅" },
+                  { text: "Funds unlocked", color: "bg-blue-100 text-blue-700", icon: "🔓" },
+                  { text: "Community growing", color: "bg-amber-100 text-amber-700", icon: "📈" },
+                ];
+                const label = trustLabels[idx % trustLabels.length];
+                const updateMessages = [
+                  "AI has verified all milestones and impact reports for this initiative. Trust score updated.",
+                  `Milestone "${initiative.title.split(":")[0]}" marked as completed. Progress on track.`,
+                  `₹${(initiative.fundingRaised * 0.3).toLocaleString('en-IN')} in funds unlocked after milestone verification.`,
+                  `${initiative.volunteerCount} volunteers now engaged. Community momentum building.`,
+                ];
+                return (
                   <Card key={`update-${initiative.id}`} className="rounded-2xl border-border/50 bg-white hover:shadow-md transition-shadow">
                     <CardContent className="p-5">
                       <div className="flex items-start gap-4">
@@ -208,7 +222,9 @@ export default function Dashboard() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="font-medium text-sm">{initiative.creatorName}</span>
-                            <span className="text-xs text-muted-foreground">posted an update</span>
+                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${label.color}`}>
+                              {label.icon} {label.text}
+                            </span>
                           </div>
                           <Link href={`/initiatives/${initiative.id}`}>
                             <h4 className="font-semibold text-sm hover:text-primary transition-colors cursor-pointer truncate">
@@ -216,7 +232,7 @@ export default function Dashboard() {
                             </h4>
                           </Link>
                           <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                            Exciting progress on this initiative. Community engagement is growing and milestones are being reached ahead of schedule.
+                            {updateMessages[idx % updateMessages.length]}
                           </p>
                           <div className="flex items-center gap-4 mt-3">
                             <motion.button
@@ -247,7 +263,8 @@ export default function Dashboard() {
                       </div>
                     </CardContent>
                   </Card>
-                ))}
+                );
+                })}
               </div>
             </div>
           </div>
@@ -370,7 +387,7 @@ export default function Dashboard() {
                 <p className="text-sm text-muted-foreground mb-4">Use AI to structure your next initiative in seconds</p>
                 <Link href="/initiatives/new">
                   <Button className="rounded-full w-full">
-                    <Sparkles className="w-4 h-4 mr-2" /> Start with AI
+                    <Sparkles className="w-4 h-4 mr-2" /> Generate with AI
                   </Button>
                 </Link>
               </CardContent>

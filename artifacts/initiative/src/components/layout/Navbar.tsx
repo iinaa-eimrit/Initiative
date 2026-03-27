@@ -41,7 +41,7 @@ export function Navbar() {
             </div>
             <Link href="/initiatives/new">
               <Button className="rounded-full px-6 shadow-md shadow-primary/20 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
-                <Sparkles className="w-4 h-4 mr-2" /> Start an Initiative
+                <Sparkles className="w-4 h-4 mr-2" /> Generate with AI
               </Button>
             </Link>
           </div>
@@ -78,7 +78,7 @@ export function Navbar() {
               ))}
               <Link href="/initiatives/new" onClick={() => setIsMobileMenuOpen(false)}>
                 <Button className="w-full mt-2">
-                  <Sparkles className="w-4 h-4 mr-2" /> Start an Initiative
+                  <Sparkles className="w-4 h-4 mr-2" /> Generate with AI
                 </Button>
               </Link>
             </div>

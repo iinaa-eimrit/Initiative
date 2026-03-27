@@ -143,3 +143,12 @@
 .like-animate {
   animation: like-pop 0.3s ease-in-out;
 }
+
+@keyframes ai-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.ai-glow {
+  animation: ai-pulse 3s ease-in-out infinite;
+}
