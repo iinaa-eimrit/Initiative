@@ -60,7 +60,7 @@ export default function Dashboard() {
           {[
             { label: "Active Missions", value: activeCount, icon: Target, color: "text-primary" },
             { label: "Total Volunteers", value: `${totalVolunteers}+`, icon: Users, color: "text-blue-500" },
-            { label: "Funds Raised", value: `$${(totalFunding / 1000).toFixed(0)}k+`, icon: DollarSign, color: "text-emerald-500" },
+            { label: "Funds Raised", value: `₹${(totalFunding / 100000).toFixed(1)}L+`, icon: DollarSign, color: "text-emerald-500" },
             { label: "Completed", value: completedCount, icon: Trophy, color: "text-amber-500" },
           ].map((stat, i) => (
             <motion.div
@@ -134,7 +134,7 @@ export default function Dashboard() {
                                     <Users className="w-3.5 h-3.5" /> {initiative.volunteerCount}
                                   </span>
                                   <span className="flex items-center gap-1">
-                                    <DollarSign className="w-3.5 h-3.5" /> ${initiative.fundingRaised.toLocaleString()}
+                                    ₹{initiative.fundingRaised.toLocaleString('en-IN')}
                                   </span>
                                   <span className="flex items-center gap-1">
                                     <MapPin className="w-3.5 h-3.5" /> {initiative.location?.split(",")[0]}
@@ -264,7 +264,7 @@ export default function Dashboard() {
                           </span>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium truncate">{init.title.split(":")[0]}</p>
-                            <p className="text-xs text-muted-foreground">${init.fundingRaised.toLocaleString()} raised</p>
+                            <p className="text-xs text-muted-foreground">₹{init.fundingRaised.toLocaleString('en-IN')} raised</p>
                           </div>
                         </div>
                       </Link>

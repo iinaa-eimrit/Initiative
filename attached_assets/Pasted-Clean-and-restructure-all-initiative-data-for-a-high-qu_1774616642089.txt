@@ -1,0 +1,135 @@
+Clean and restructure all initiative data for a high-quality hackathon demo.
+
+====================================
+GOAL
+====================================
+
+Replace all existing messy or randomly generated initiatives with a curated, hardcoded dataset that feels realistic, clean, and engaging.
+
+This is critical for demo quality.
+
+====================================
+1. REMOVE EXISTING DATA
+====================================
+
+- Delete all previously generated or inconsistent initiatives
+- Remove any noisy, duplicate, or incomplete data
+- Ensure system starts with clean curated data only
+
+====================================
+2. CREATE CURATED INITIATIVES (10–12 TOTAL)
+====================================
+
+Create realistic, diverse initiatives grouped into:
+
+A. ACTIVE MISSIONS (6–7)
+
+Include:
+- Early stage (planning)
+- Mid stage (active)
+- Near completion
+
+B. COMPLETED MISSIONS (4–5)
+
+Fully completed with full impact data
+
+====================================
+3. CATEGORIES
+====================================
+
+Distribute across:
+
+- Education
+- Environment
+- Healthcare
+- Community Support
+- Women Empowerment
+- Rural Development
+
+====================================
+4. EACH INITIATIVE MUST INCLUDE
+====================================
+
+- Title (realistic, human)
+- Description (clear problem + goal)
+- Location (real city + country)
+- Category
+- Volunteers (5–20 realistic names)
+- Donations (₹ realistic values)
+- Milestones (3–5 structured)
+- Progress percentage
+- Trust score (varied)
+- Lifecycle stage (planning, active, near completion, completed)
+
+====================================
+5. UPDATES TIMELINE
+====================================
+
+Each initiative must have:
+
+- 3–6 updates
+- Each update includes:
+  - Caption
+  - Image placeholder
+  - Location
+  - Date
+
+====================================
+6. BLOGS (ONLY FOR COMPLETED MISSIONS)
+====================================
+
+Each completed mission must have 1–2 blog entries:
+
+Each blog includes:
+
+- Title
+- Story of execution
+- Challenges faced
+- Outcome
+- Impact summary
+
+Blogs should feel like real human stories, not AI generic text.
+
+====================================
+7. VISUAL CONSISTENCY
+====================================
+
+- Use consistent placeholder images
+- Use realistic names for volunteers
+- Use believable numbers
+
+====================================
+8. UI ORGANIZATION
+====================================
+
+Ensure UI clearly separates:
+
+- Active Missions
+- Completed Missions
+- Categories
+
+Completed missions should highlight:
+
+- Impact delivered
+- Blog/story
+
+====================================
+9. DEMO QUALITY
+====================================
+
+Ensure:
+
+- No empty states
+- No broken data
+- Everything feels real
+- Data is consistent across UI
+
+====================================
+OUTPUT
+====================================
+
+Explain:
+
+- How data is structured
+- How categories are organized
+- How blogs are linked to completed missions

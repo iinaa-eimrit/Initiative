@@ -6,6 +6,7 @@ import {
   volunteersTable,
   donationsTable,
   updatesTable,
+  blogsTable,
   insertInitiativeSchema,
   insertVolunteerSchema,
   insertDonationSchema,
@@ -228,6 +229,12 @@ router.get("/:id", async (req, res) => {
       .where(eq(updatesTable.initiativeId, initiative.id))
       .orderBy(desc(updatesTable.createdAt));
 
+    const blogs = await db
+      .select()
+      .from(blogsTable)
+      .where(eq(blogsTable.initiativeId, initiative.id))
+      .orderBy(desc(blogsTable.createdAt));
+
     const formatted = await formatInitiativeWithScore(initiative);
 
     res.json({
@@ -262,6 +269,15 @@ router.get("/:id", async (req, res) => {
         content: u.content,
         imageUrl: u.imageUrl ?? null,
         createdAt: u.createdAt.toISOString(),
+      })),
+      blogs: blogs.map((b) => ({
+        id: b.id,
+        title: b.title,
+        story: b.story,
+        challenges: b.challenges,
+        outcome: b.outcome,
+        impactSummary: b.impactSummary,
+        createdAt: b.createdAt.toISOString(),
       })),
     });
   } catch (err) {

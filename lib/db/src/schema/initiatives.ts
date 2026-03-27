@@ -110,3 +110,18 @@ export const updatesTable = pgTable("updates", {
 export const insertUpdateSchema = createInsertSchema(updatesTable).omit({ id: true, createdAt: true });
 export type Update = typeof updatesTable.$inferSelect;
 export type InsertUpdate = z.infer<typeof insertUpdateSchema>;
+
+export const blogsTable = pgTable("blogs", {
+  id: serial("id").primaryKey(),
+  initiativeId: integer("initiative_id").notNull().references(() => initiativesTable.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  story: text("story").notNull(),
+  challenges: text("challenges").notNull(),
+  outcome: text("outcome").notNull(),
+  impactSummary: text("impact_summary").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertBlogSchema = createInsertSchema(blogsTable).omit({ id: true, createdAt: true });
+export type Blog = typeof blogsTable.$inferSelect;
+export type InsertBlog = z.infer<typeof insertBlogSchema>;

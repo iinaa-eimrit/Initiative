@@ -110,7 +110,7 @@ export default function Home() {
             {[
               { value: totalMissions, label: "Missions Launched", icon: <Target className="w-6 h-6" />, color: "text-primary" },
               { value: `${totalVolunteers}+`, label: "Volunteers Engaged", icon: <Users className="w-6 h-6" />, color: "text-blue-500" },
-              { value: `$${(totalFunding / 1000).toFixed(0)}k+`, label: "Funds Raised", icon: <DollarSign className="w-6 h-6" />, color: "text-emerald-500" },
+              { value: `₹${(totalFunding / 100000).toFixed(1)}L+`, label: "Funds Raised", icon: <DollarSign className="w-6 h-6" />, color: "text-emerald-500" },
               { value: categories.size, label: "Categories", icon: <Globe2 className="w-6 h-6" />, color: "text-amber-500" },
             ].map((stat, i) => (
               <motion.div
@@ -210,8 +210,8 @@ export default function Home() {
                           <p className="text-sm text-muted-foreground mb-4 line-clamp-2">{initiative.description}</p>
                           <div className="space-y-2">
                             <div className="flex justify-between text-sm">
-                              <span className="text-primary font-semibold">${initiative.fundingRaised.toLocaleString()}</span>
-                              <span className="text-muted-foreground">of ${initiative.fundingGoal.toLocaleString()}</span>
+                              <span className="text-primary font-semibold">₹{initiative.fundingRaised.toLocaleString('en-IN')}</span>
+                              <span className="text-muted-foreground">of ₹{initiative.fundingGoal.toLocaleString('en-IN')}</span>
                             </div>
                             <Progress value={progress} className="h-2 rounded-full" />
                           </div>
@@ -270,7 +270,7 @@ export default function Home() {
                               <Users className="w-4 h-4" /> {initiative.volunteerCount}
                             </span>
                             <span className="flex items-center gap-1 text-sm text-emerald-600 font-semibold">
-                              <DollarSign className="w-4 h-4" /> ${initiative.fundingRaised.toLocaleString()}
+                              <DollarSign className="w-4 h-4" /> ₹{initiative.fundingRaised.toLocaleString('en-IN')}
                             </span>
                           </div>
                           <span className="flex items-center gap-1 text-sm font-medium text-emerald-600">

@@ -28,10 +28,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { TrustBreakdown } from "@/components/TrustScoreBadge";
 import { LifecycleTracker } from "@/components/LifecycleBadge";
+import { BookOpen } from "lucide-react";
 
 const donateSchema = z.object({
   donorName: z.string().min(2, "Name is required"),
-  amount: z.coerce.number().min(1, "Minimum $1"),
+  amount: z.coerce.number().min(1, "Minimum ₹1"),
   message: z.string().optional(),
 });
 
@@ -259,7 +260,7 @@ export default function InitiativeDetail() {
                                 </div>
                               </div>
                               <div className="text-right shrink-0 ml-4">
-                                <div className="font-bold text-sm">${milestone.targetAmount.toLocaleString()}</div>
+                                <div className="font-bold text-sm">₹{milestone.targetAmount.toLocaleString('en-IN')}</div>
                                 <Badge variant="outline" className={`text-xs capitalize ${
                                   isCompleted ? 'text-green-600 border-green-200' : 
                                   isActive ? 'text-blue-600 border-blue-200' : ''
@@ -325,6 +326,55 @@ export default function InitiativeDetail() {
                       </motion.div>
                     ))}
                   </div>
+                </div>
+              </section>
+            )}
+
+            {initiative.blogs && initiative.blogs.length > 0 && (
+              <section>
+                <div className="flex items-center gap-2 mb-6">
+                  <BookOpen className="w-5 h-5 text-emerald-600" />
+                  <h2 className="text-2xl font-bold">Impact Stories</h2>
+                  <Badge className="bg-emerald-100 text-emerald-700 border-none text-xs">{initiative.blogs.length} {initiative.blogs.length === 1 ? 'story' : 'stories'}</Badge>
+                </div>
+                <div className="space-y-6">
+                  {initiative.blogs.map((blog: any, i: number) => (
+                    <motion.div
+                      key={blog.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.1 }}
+                    >
+                      <Card className="rounded-2xl border-emerald-200/50 overflow-hidden">
+                        <div className="h-1.5 w-full bg-gradient-to-r from-emerald-400 to-teal-400" />
+                        <CardContent className="p-6">
+                          <h3 className="text-xl font-bold mb-4">{blog.title}</h3>
+                          
+                          <div className="space-y-4">
+                            <div>
+                              <h4 className="text-sm font-bold text-emerald-700 uppercase tracking-wide mb-2">The Story</h4>
+                              <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{blog.story}</p>
+                            </div>
+                            
+                            <div className="bg-amber-50/50 rounded-xl p-4 border border-amber-100">
+                              <h4 className="text-sm font-bold text-amber-700 uppercase tracking-wide mb-2">Challenges Faced</h4>
+                              <p className="text-sm text-muted-foreground leading-relaxed">{blog.challenges}</p>
+                            </div>
+                            
+                            <div>
+                              <h4 className="text-sm font-bold text-blue-700 uppercase tracking-wide mb-2">Outcome</h4>
+                              <p className="text-sm text-muted-foreground leading-relaxed">{blog.outcome}</p>
+                            </div>
+                            
+                            <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
+                              <h4 className="text-sm font-bold text-emerald-700 uppercase tracking-wide mb-2">Impact at a Glance</h4>
+                              <p className="text-sm font-medium text-emerald-800">{blog.impactSummary}</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  ))}
                 </div>
               </section>
             )}
@@ -399,10 +449,10 @@ export default function InitiativeDetail() {
                 <CardContent className="p-6">
                   <div className="mb-4">
                     <div className="flex items-baseline gap-2 mb-1">
-                      <span className="text-4xl font-bold font-display text-foreground">${initiative.fundingRaised.toLocaleString()}</span>
+                      <span className="text-4xl font-bold font-display text-foreground">₹{initiative.fundingRaised.toLocaleString('en-IN')}</span>
                       <span className="text-muted-foreground font-medium">raised</span>
                     </div>
-                    <p className="text-sm text-muted-foreground">of ${initiative.fundingGoal.toLocaleString()} goal</p>
+                    <p className="text-sm text-muted-foreground">of ₹{initiative.fundingGoal.toLocaleString('en-IN')} goal</p>
                   </div>
                   
                   <Progress value={progressPercent} className="h-3 mb-4 bg-muted" indicatorClassName="bg-primary" />
@@ -424,7 +474,7 @@ export default function InitiativeDetail() {
                           <form onSubmit={donateForm.handleSubmit((v) => donateMutation.mutate({ id: initiativeId, data: v }))} className="space-y-4 mt-4">
                             <FormField control={donateForm.control} name="amount" render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Amount ($)</FormLabel>
+                                <FormLabel>Amount (₹)</FormLabel>
                                 <FormControl><Input type="number" className="text-lg h-12 rounded-xl" {...field} /></FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -444,7 +494,7 @@ export default function InitiativeDetail() {
                               </FormItem>
                             )} />
                             <Button type="submit" className="w-full h-12 rounded-xl text-lg mt-2" disabled={donateMutation.isPending}>
-                              {donateMutation.isPending ? "Processing..." : `Donate $${donateForm.watch('amount') || 0}`}
+                              {donateMutation.isPending ? "Processing..." : `Donate ₹${donateForm.watch('amount') || 0}`}
                             </Button>
                           </form>
                         </Form>
@@ -535,7 +585,7 @@ export default function InitiativeDetail() {
                           </div>
                           <span className="font-medium text-sm">{donor.donorName}</span>
                         </div>
-                        <span className="font-bold text-primary">${donor.totalAmount.toLocaleString()}</span>
+                        <span className="font-bold text-primary">₹{donor.totalAmount.toLocaleString('en-IN')}</span>
                       </div>
                     ))}
                   </div>

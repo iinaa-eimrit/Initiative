@@ -144,8 +144,8 @@ export default function Initiatives() {
                       
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm font-medium">
-                          <span className="text-primary">${initiative.fundingRaised?.toLocaleString()} raised</span>
-                          <span className="text-muted-foreground">of ${initiative.fundingGoal?.toLocaleString()}</span>
+                          <span className="text-primary">₹{initiative.fundingRaised?.toLocaleString('en-IN')} raised</span>
+                          <span className="text-muted-foreground">of ₹{initiative.fundingGoal?.toLocaleString('en-IN')}</span>
                         </div>
                         <Progress 
                           value={Math.min((initiative.fundingRaised / initiative.fundingGoal) * 100, 100)} 

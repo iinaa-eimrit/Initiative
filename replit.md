@@ -31,9 +31,10 @@ An AI-powered social impact execution platform. Users describe an idea and AI ge
 - Landing page: hero, Impact Stats, How It Works (4 steps), Active Initiatives (live from API), Completed Missions, 6 feature cards, CTAs
 - Impact Dashboard: stats grid (active/volunteers/funds/completed), active missions feed with Like buttons, impact updates, leaderboard (top volunteers/top funded), category badges
 - Initiative feed with search, 6 category filters (education, environment, healthcare, community, women empowerment, rural development), trust scores, lifecycle badges
-- 14 diverse seeded initiatives across 6 categories, 4 lifecycle stages, real-world locations
+- 11 curated India-focused initiatives (7 active, 4 completed) with ₹ currency throughout
 - Initiative detail page with structured plan, milestones, updates, volunteer suggestions
 - Donor leaderboard, volunteer signup, donation forms
+- Impact Stories (blogs) for completed missions with story, challenges, outcome, impact summary
 
 ### Key Services
 - `artifacts/api-server/src/services/aiService.ts` — mock AI plan generator (deterministic, LLM-ready)
@@ -134,6 +135,7 @@ Database layer. Schema:
 - `volunteersTable` — volunteer signups (+ skills, matchedScore)
 - `donationsTable` — donation records
 - `updatesTable` — initiative update posts (title, content, imageUrl, createdAt)
+- `blogsTable` — impact story blogs for completed initiatives (title, story, challenges, outcome, impactSummary)
 
 Enums: initiative_status (active/completed/paused), milestone_status (pending/active/completed), lifecycle_stage (idea/planning/active/impact_delivered), user_role (changemaker/volunteer/donor/organizer)
 
