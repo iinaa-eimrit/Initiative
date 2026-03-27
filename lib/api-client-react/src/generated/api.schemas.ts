@@ -5,6 +5,58 @@
  * Initiative platform API
  * OpenAPI spec version: 0.2.0
  */
+export type SignupInputRole =
+  (typeof SignupInputRole)[keyof typeof SignupInputRole];
+
+export const SignupInputRole = {
+  changemaker: "changemaker",
+  volunteer: "volunteer",
+  donor: "donor",
+  organizer: "organizer",
+} as const;
+
+export interface SignupInput {
+  /** @minLength 2 */
+  name: string;
+  email: string;
+  /** @minLength 6 */
+  password: string;
+  role?: SignupInputRole;
+  skills?: string | null;
+  bio?: string | null;
+}
+
+export interface LoginInput {
+  email: string;
+  password: string;
+}
+
+export type UserProfileRole =
+  (typeof UserProfileRole)[keyof typeof UserProfileRole];
+
+export const UserProfileRole = {
+  changemaker: "changemaker",
+  volunteer: "volunteer",
+  donor: "donor",
+  organizer: "organizer",
+} as const;
+
+export interface UserProfile {
+  id: number;
+  name: string;
+  email: string;
+  role: UserProfileRole;
+  skills?: string | null;
+  bio?: string | null;
+  avatarUrl?: string | null;
+  createdAt: string;
+}
+
+export interface AuthResponse {
+  user: UserProfile;
+  token: string;
+}
+
 export interface HealthStatus {
   status: string;
 }

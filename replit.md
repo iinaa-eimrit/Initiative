@@ -27,7 +27,9 @@ An AI-powered social impact execution platform. Users describe an idea and AI ge
 - Impact Proof Feed: timeline of initiative updates with evidence of progress
 - AI Volunteer Matching: suggested volunteers with skill-based matching and explanations
 - Initiative Lifecycle: visual stage tracker (Idea → Planning → Active → Impact Delivered)
-- Landing page with hero, 6 feature cards, and CTA
+- Authentication: signup/login with bcrypt+JWT, auth context, auth-aware navbar
+- Post-login Dashboard: welcome header, stats grid, active missions feed, impact updates, leaderboard, profile card
+- Landing page: hero, How It Works (4 steps), Active Initiatives (live from API), Impact Stats, 6 feature cards, auth-aware CTAs
 - Initiative feed with search, category filters, trust scores, and lifecycle badges
 - Initiative detail page with structured plan, milestones, updates, volunteer suggestions
 - Donor leaderboard, volunteer signup, donation forms
@@ -96,8 +98,9 @@ Every package extends `tsconfig.base.json` which sets `composite: true`. The roo
 
 React + Vite frontend for the Initiative platform.
 
-- Pages: Home (landing), Initiatives (feed), CreateInitiative (AI + manual), InitiativeDetail
-- Components: Navbar, TrustScoreBadge, TrustBreakdown, LifecycleBadge, LifecycleTracker, ui/ (shadcn-style)
+- Pages: Home (landing), Initiatives (feed), CreateInitiative (AI + manual), InitiativeDetail, Login, Signup, Dashboard
+- Components: Navbar (auth-aware), TrustScoreBadge, TrustBreakdown, LifecycleBadge, LifecycleTracker, ui/ (shadcn-style)
+- Hooks: useAuth (JWT auth context with setAuthTokenGetter)
 - Uses React Query hooks from `@workspace/api-client-react`
 - Routing via `wouter`
 - Dev-only artifact — in production, its build output is served by the API server
@@ -107,6 +110,9 @@ React + Vite frontend for the Initiative platform.
 Express 5 API server. In production, also serves the React frontend as static files.
 
 Routes in `src/routes/`:
+- `POST /api/auth/signup` — register new user (name, email, password, role, skills, bio)
+- `POST /api/auth/login` — authenticate user, returns JWT token
+- `GET /api/auth/me` — get current user from JWT token (Authorization: Bearer)
 - `GET /api/initiatives` — list initiatives (with filters, includes trustScore and lifecycleStage)
 - `POST /api/initiatives` — create initiative (supports structuredPlan from AI generation)
 - `GET /api/initiatives/:id` — initiative detail with milestones, volunteers, topDonors, updates
@@ -121,13 +127,14 @@ Routes in `src/routes/`:
 ### `lib/db` (`@workspace/db`)
 
 Database layer. Schema:
+- `usersTable` — user accounts (name, email, passwordHash, role, skills, bio, achievements, createdAt)
 - `initiativesTable` — main initiatives (+ lifecycleStage enum, structuredPlan jsonb)
 - `milestonesTable` — milestones per initiative (+ fundsLocked)
 - `volunteersTable` — volunteer signups (+ skills, matchedScore)
 - `donationsTable` — donation records
 - `updatesTable` — initiative update posts (title, content, imageUrl, createdAt)
 
-Enums: initiative_status (active/completed/paused), milestone_status (pending/active/completed), lifecycle_stage (idea/planning/active/impact_delivered)
+Enums: initiative_status (active/completed/paused), milestone_status (pending/active/completed), lifecycle_stage (idea/planning/active/impact_delivered), user_role (changemaker/volunteer/donor/organizer)
 
 ### `lib/api-spec` (`@workspace/api-spec`)
 

@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.2.0
  */
 
+export * from "./authResponse";
 export * from "./createInitiativeInput";
 export * from "./createInitiativeInputLifecycleStage";
 export * from "./createInitiativeInputStructuredPlan";
@@ -22,12 +23,17 @@ export * from "./initiativeStatus";
 export * from "./initiativeUpdate";
 export * from "./leaderboardEntry";
 export * from "./listInitiativesParams";
+export * from "./loginInput";
 export * from "./milestone";
 export * from "./milestoneStatus";
 export * from "./milestoneTimeline";
+export * from "./signupInput";
+export * from "./signupInputRole";
 export * from "./structuredPlan";
 export * from "./trustScore";
 export * from "./trustScoreBreakdown";
+export * from "./userProfile";
+export * from "./userProfileRole";
 export * from "./volunteer";
 export * from "./volunteerInput";
 export * from "./volunteerSuggestion";

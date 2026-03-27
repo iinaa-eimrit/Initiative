@@ -8,6 +8,58 @@
 import * as zod from "zod";
 
 /**
+ * @summary Create a new user account
+ */
+export const signupBodyNameMin = 2;
+
+export const signupBodyPasswordMin = 6;
+
+export const SignupBody = zod.object({
+  name: zod.string().min(signupBodyNameMin),
+  email: zod.string().email(),
+  password: zod.string().min(signupBodyPasswordMin),
+  role: zod.enum(["changemaker", "volunteer", "donor", "organizer"]).optional(),
+  skills: zod.string().nullish(),
+  bio: zod.string().nullish(),
+});
+
+/**
+ * @summary Log in with email and password
+ */
+export const LoginBody = zod.object({
+  email: zod.string().email(),
+  password: zod.string(),
+});
+
+export const LoginResponse = zod.object({
+  user: zod.object({
+    id: zod.number(),
+    name: zod.string(),
+    email: zod.string(),
+    role: zod.enum(["changemaker", "volunteer", "donor", "organizer"]),
+    skills: zod.string().nullish(),
+    bio: zod.string().nullish(),
+    avatarUrl: zod.string().nullish(),
+    createdAt: zod.date(),
+  }),
+  token: zod.string(),
+});
+
+/**
+ * @summary Get current authenticated user
+ */
+export const GetMeResponse = zod.object({
+  id: zod.number(),
+  name: zod.string(),
+  email: zod.string(),
+  role: zod.enum(["changemaker", "volunteer", "donor", "organizer"]),
+  skills: zod.string().nullish(),
+  bio: zod.string().nullish(),
+  avatarUrl: zod.string().nullish(),
+  createdAt: zod.date(),
+});
+
+/**
  * @summary Health check
  */
 export const HealthCheckResponse = zod.object({

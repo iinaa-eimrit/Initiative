@@ -5,8 +5,10 @@ import {
   volunteersTable,
   donationsTable,
   updatesTable,
+  usersTable,
 } from "@workspace/db/schema";
 import { count } from "drizzle-orm";
+import bcrypt from "bcryptjs";
 import { logger } from "./lib/logger";
 
 export async function ensureDemoData() {
@@ -29,6 +31,15 @@ export async function ensureDemoData() {
 
 async function seedWithTx(tx: Parameters<Parameters<typeof db.transaction>[0]>[0]) {
   try {
+    const passwordHash = await bcrypt.hash("demo123", 10);
+
+    await tx.insert(usersTable).values([
+      { name: "Maria Santos", email: "maria@example.com", passwordHash, role: "changemaker", skills: "Teaching, Leadership, Community Outreach", bio: "Passionate educator dedicated to closing the achievement gap in underserved communities." },
+      { name: "James Chen", email: "james@example.com", passwordHash, role: "organizer", skills: "Engineering, Project Management, Research", bio: "Environmental scientist and community organizer working to restore urban ecosystems." },
+      { name: "Dr. Aisha Patel", email: "aisha@example.com", passwordHash, role: "changemaker", skills: "Healthcare, Data Analysis, Leadership", bio: "Public health physician bringing mobile healthcare to rural communities." },
+      { name: "Derek Williams", email: "derek@example.com", passwordHash, role: "volunteer", skills: "Marketing, Design, Community Outreach", bio: "Youth mentor and community builder connecting at-risk youth with professional mentors." },
+      { name: "Demo User", email: "demo@initiative.app", passwordHash, role: "changemaker", skills: "Design, Engineering, Marketing", bio: "Demo account for exploring the Initiative platform." },
+    ]);
 
     const initiatives = [
       {

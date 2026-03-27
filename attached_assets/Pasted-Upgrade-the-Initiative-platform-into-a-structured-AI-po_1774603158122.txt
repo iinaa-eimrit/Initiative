@@ -1,0 +1,184 @@
+Upgrade the Initiative platform into a structured AI-powered social impact execution system with a clean user journey.
+
+IMPORTANT:
+Do NOT over-engineer.
+Do NOT build full social media features like stories or complex blogging.
+Focus on clarity, usability, and demo impact.
+
+====================================
+GOAL
+====================================
+
+Create a complete user flow:
+
+Landing → Signup → Dashboard → Initiative → Execution → Impact
+
+====================================
+1. LANDING PAGE
+====================================
+
+Design a modern SaaS landing page.
+
+Sections:
+
+- Hero:
+  Title: "Turn ideas into real-world impact"
+  CTA: "Start Your Initiative"
+
+- How it works:
+  Step 1: Describe idea
+  Step 2: AI builds mission
+  Step 3: Collaborate
+  Step 4: Deliver impact
+
+- Active initiatives (cards)
+
+- Completed missions
+
+- Impact stats (mock data):
+  volunteers, funds, missions
+
+- Clean modern UI (not NGO style)
+
+====================================
+2. AUTHENTICATION
+====================================
+
+Signup fields:
+
+- Name
+- Email
+- Password
+- Role (dropdown)
+- Skills / Interests (multi-select)
+- Optional: bio, achievements
+
+Store user profile.
+
+====================================
+3. DASHBOARD
+====================================
+
+After login:
+
+Main sections:
+
+A. Top CTA:
+"Start Initiative"
+
+B. Active Missions Feed:
+
+Each card shows:
+- Title
+- Trust score
+- Progress %
+- Volunteers count
+- Budget
+
+Actions:
+- View
+- Volunteer
+- Donate
+- Share
+
+C. Impact Updates Feed:
+
+Each update includes:
+- Image
+- Caption
+- Location
+- Progress note
+
+Actions:
+- Like
+- Comment
+- Share
+
+D. Leaderboard:
+
+Tabs:
+- Volunteers
+- Donors
+
+Filters:
+- Weekly / Monthly
+- Local / Global
+
+====================================
+4. INITIATIVE PAGE
+====================================
+
+Sections:
+
+- Mission overview
+- AI generated structured plan
+- Milestones
+- Trust score
+- Budget progress
+- Volunteers list
+- Updates timeline
+
+Actions:
+
+- Volunteer (form)
+- Donate (anonymous or public)
+- Report issue
+
+====================================
+5. UPDATE SYSTEM
+====================================
+
+Rules:
+
+- Only volunteers can post updates
+- Updates include:
+  image, caption, location
+- Updates cannot be edited
+- Updates can be deleted by creator
+
+====================================
+6. TRUST SYSTEM
+====================================
+
+Trust score based on:
+
+- Updates count
+- Milestones completed
+- Volunteers joined
+
+Display clearly.
+
+====================================
+7. SIMPLIFICATIONS (IMPORTANT)
+====================================
+
+DO NOT IMPLEMENT:
+
+- Stories system
+- Complex blog system
+- Real payments
+- Chat system
+
+Keep system clean and demo-ready.
+
+====================================
+8. UI REQUIREMENTS
+====================================
+
+- Modern SaaS + social hybrid design
+- Clean layout
+- Smooth navigation
+- Emotional but minimal
+
+====================================
+OUTPUT
+====================================
+
+Ensure:
+
+- Smooth user journey
+- Clear navigation
+- No crashes
+- Demo ready
+
+Explain what was implemented and how flow works.

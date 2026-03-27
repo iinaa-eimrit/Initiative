@@ -2,6 +2,27 @@ import { pgTable, serial, text, real, integer, timestamp, pgEnum, jsonb } from "
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
+export const userRoleEnum = pgEnum("user_role", ["changemaker", "volunteer", "donor", "organizer"]);
+
+export const usersTable = pgTable("users", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
+  role: userRoleEnum("role").notNull().default("changemaker"),
+  skills: text("skills"),
+  bio: text("bio"),
+  avatarUrl: text("avatar_url"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertUserSchema = createInsertSchema(usersTable).omit({
+  id: true,
+  createdAt: true,
+});
+export type User = typeof usersTable.$inferSelect;
+export type InsertUser = z.infer<typeof insertUserSchema>;
+
 export const initiativeStatusEnum = pgEnum("initiative_status", ["active", "completed", "paused"]);
 export const milestoneStatusEnum = pgEnum("milestone_status", ["pending", "active", "completed"]);
 export const lifecycleStageEnum = pgEnum("lifecycle_stage", ["idea", "planning", "active", "impact_delivered"]);
