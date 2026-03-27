@@ -129,13 +129,13 @@ export default function CreateInitiative() {
   };
 
   return (
-    <div className="min-h-screen bg-muted/20 pt-24 pb-20">
+    <div className="min-h-screen bg-background pt-16 pb-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <button 
           onClick={() => step === "describe" ? setLocation("/initiatives") : setStep("describe")}
-          className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-8 group"
+          className="flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors mb-5 group"
         >
-          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+          <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
           {step === "describe" ? "Back to feed" : "Start over"}
         </button>
 
@@ -148,7 +148,7 @@ export default function CreateInitiative() {
               exit={{ opacity: 0, y: -20 }}
             >
               <div className="mb-8">
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-100 text-purple-700 font-medium text-sm mb-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-100 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 font-medium text-sm mb-4">
                   <Sparkles className="w-3.5 h-3.5" /> AI-Powered
                 </div>
                 <h1 className="text-4xl font-bold mb-3">Describe your initiative</h1>
@@ -223,7 +223,7 @@ export default function CreateInitiative() {
               exit={{ opacity: 0, y: -20 }}
             >
               <div className="mb-8">
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-100 text-green-700 font-medium text-sm mb-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-100 dark:bg-green-950/40 text-green-700 dark:text-green-300 font-medium text-sm mb-4">
                   <CheckCircle2 className="w-3.5 h-3.5" /> Plan Generated
                 </div>
                 <h1 className="text-4xl font-bold mb-3">Review your AI-generated plan</h1>
@@ -244,15 +244,15 @@ export default function CreateInitiative() {
                     <p className="text-muted-foreground mb-6">{generatedPlan.structuredPlan.problemStatement}</p>
                     
                     <div className="grid sm:grid-cols-2 gap-6 mb-8">
-                      <div className="bg-green-50 p-5 rounded-2xl border border-green-100">
-                        <DollarSign className="w-6 h-6 text-green-600 mb-2" />
-                        <div className="text-2xl font-bold text-green-700">${generatedPlan.fundingGoal.toLocaleString()}</div>
-                        <div className="text-sm text-green-600">Estimated budget</div>
+                      <div className="bg-green-50 dark:bg-green-950/40 p-5 rounded-2xl border border-green-100 dark:border-green-900/50">
+                        <DollarSign className="w-6 h-6 text-green-600 dark:text-green-400 mb-2" />
+                        <div className="text-2xl font-bold text-green-700 dark:text-green-300">₹{generatedPlan.fundingGoal.toLocaleString('en-IN')}</div>
+                        <div className="text-sm text-green-600 dark:text-green-400">Estimated budget</div>
                       </div>
-                      <div className="bg-blue-50 p-5 rounded-2xl border border-blue-100">
-                        <Users className="w-6 h-6 text-blue-600 mb-2" />
-                        <div className="text-2xl font-bold text-blue-700">{generatedPlan.structuredPlan.suggestedRoles.length}</div>
-                        <div className="text-sm text-blue-600">Volunteer roles needed</div>
+                      <div className="bg-blue-50 dark:bg-blue-950/40 p-5 rounded-2xl border border-blue-100 dark:border-blue-900/50">
+                        <Users className="w-6 h-6 text-blue-600 dark:text-blue-400 mb-2" />
+                        <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">{generatedPlan.structuredPlan.suggestedRoles.length}</div>
+                        <div className="text-sm text-blue-600 dark:text-blue-400">Volunteer roles needed</div>
                       </div>
                     </div>
 
@@ -283,7 +283,7 @@ export default function CreateInitiative() {
                               <div className="text-xs text-muted-foreground">{m.description}</div>
                             </div>
                             <div className="text-right shrink-0">
-                              <div className="font-bold text-sm text-primary">${m.targetAmount.toLocaleString()}</div>
+                              <div className="font-bold text-sm text-primary">₹{m.targetAmount.toLocaleString('en-IN')}</div>
                               <div className="text-xs text-muted-foreground">{m.durationWeeks}w</div>
                             </div>
                           </div>
@@ -295,7 +295,7 @@ export default function CreateInitiative() {
                       <h3 className="font-bold text-lg mb-3">Suggested Volunteer Roles</h3>
                       <div className="flex flex-wrap gap-2">
                         {generatedPlan.structuredPlan.suggestedRoles.map((role, i) => (
-                          <span key={i} className="px-3 py-1.5 bg-purple-50 text-purple-700 rounded-full text-sm font-medium border border-purple-100">
+                          <span key={i} className="px-3 py-1.5 bg-purple-50 dark:bg-purple-950/40 text-purple-700 dark:text-purple-300 rounded-full text-sm font-medium border border-purple-100 dark:border-purple-900/50">
                             {role}
                           </span>
                         ))}
@@ -407,7 +407,7 @@ export default function CreateInitiative() {
                         <div className="grid sm:grid-cols-2 gap-6">
                           <FormField control={form.control} name="fundingGoal" render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Funding Goal ($)</FormLabel>
+                              <FormLabel>Funding Goal (₹)</FormLabel>
                               <FormControl>
                                 <Input type="number" min="0" className="h-12 rounded-xl text-lg font-medium" {...field} />
                               </FormControl>

@@ -1,0 +1,222 @@
+Upgrade the Initiative platform UI to a high-density, modern, social-impact product with light and dark theme support.
+
+IMPORTANT:
+This is NOT a redesign from scratch.
+This is a UI refinement focused on:
+- reducing unnecessary whitespace
+- improving information density
+- making UI more engaging and action-oriented
+- adding premium theming (light + dark)
+
+====================================
+PRIMARY GOAL
+====================================
+
+Transform the UI from a spaced-out SaaS layout into a compact, content-rich, social platform like Instagram / LinkedIn.
+
+====================================
+1. REDUCE EXCESSIVE SPACING
+====================================
+
+- Replace large paddings (py-16, py-20) with tighter spacing (py-6, py-8)
+- Reduce vertical gaps between sections
+- Use gap-3 or gap-4 instead of large gaps
+- Remove unnecessary empty blocks
+
+Goal:
+More content visible above the fold
+
+====================================
+2. CONVERT DASHBOARD INTO CONTINUOUS FEED
+====================================
+
+Instead of separated sections, create a flowing layout:
+
+Top:
+- AI input box (primary CTA)
+
+Below:
+- Stories row (horizontal scroll)
+- Impact feed (main content)
+- Right sidebar (desktop)
+
+Avoid heavy section separation
+
+====================================
+3. IMPACT FEED (CORE COMPONENT)
+====================================
+
+Redesign initiative cards into compact social posts.
+
+Each card layout:
+
+[Image thumbnail left OR top]
+[Title + Location]
+[1-line caption]
+[Progress bar]
+[Stats row: ₹ raised | volunteers | trust score]
+[Action row: Like | Comment | Join | Donate]
+
+Rules:
+
+- Reduce vertical stacking
+- Use horizontal alignment where possible
+- Keep cards compact (no tall cards)
+- Use max 2–3 lines text
+
+====================================
+4. GRID LAYOUT (DESKTOP)
+====================================
+
+- Use 2–3 column grid for feed
+- Use gap-4 between cards
+- Avoid single column waste
+
+====================================
+5. RIGHT SIDEBAR (DESKTOP ONLY)
+====================================
+
+Add sticky sidebar with:
+
+- Leaderboard (Top volunteers / donors)
+- "Start with AI" CTA card
+- Trending initiatives
+
+====================================
+6. AI INPUT (PRIMARY FOCUS)
+====================================
+
+Add prominent input box at top:
+
+Placeholder:
+"Describe what you want to change..."
+
+Button:
+"✨ Generate with AI"
+
+Design:
+
+- Larger than other elements
+- Slight glow / gradient border
+- Always visible above fold
+
+====================================
+7. VISUAL HIERARCHY FIX
+====================================
+
+Apply typography rules:
+
+- Titles: bold, larger
+- Numbers: high contrast
+- Meta text: smaller, muted
+
+Example:
+
+₹31,000 raised → bold
+18 volunteers → medium
+Location → subtle
+
+====================================
+8. REMOVE DECORATIVE ELEMENTS
+====================================
+
+Remove:
+
+- oversized headings
+- long descriptive paragraphs
+- unnecessary empty sections
+
+Replace with:
+
+- real content
+- interaction elements
+
+====================================
+9. MICRO-INTERACTIONS
+====================================
+
+Add:
+
+- card hover lift (scale 1.02)
+- button hover scale
+- smooth transitions
+- progress bar animation
+- like button animation
+
+====================================
+10. LIGHT + DARK THEME (CRITICAL)
+====================================
+
+Implement theme system using Tailwind or CSS variables.
+
+Create two themes:
+
+------------------------------------
+LIGHT MODE
+------------------------------------
+Background: #F9FAFB (soft white)
+Card: #FFFFFF
+Text primary: #111827
+Text secondary: #6B7280
+Accent: emerald / teal gradient
+
+------------------------------------
+DARK MODE
+------------------------------------
+Background: #0B0F14 (deep dark)
+Card: #111827
+Border: #1F2937
+Text primary: #F9FAFB
+Text secondary: #9CA3AF
+Accent: slightly brighter emerald / cyan
+
+------------------------------------
+
+Theme requirements:
+
+- Add toggle button (top right)
+- Persist theme (localStorage)
+- Smooth transition between themes
+- Ensure all components support both modes
+
+====================================
+11. COLOR & BRAND FEEL
+====================================
+
+Use:
+
+- Emerald / teal (trust + growth)
+- Purple accents (AI intelligence)
+- Soft gradients (premium feel)
+
+Avoid:
+
+- harsh colors
+- overly bright tones
+
+====================================
+12. MOBILE OPTIMIZATION
+====================================
+
+- Single column layout
+- Compact cards
+- Sticky bottom navigation (optional)
+- Reduce padding further
+
+====================================
+OUTPUT
+====================================
+
+Ensure UI feels:
+
+- Dense but clean
+- Social and engaging
+- Premium and modern
+- AI-first
+- Ready for daily use
+
+Explain:
+
+- layout changes made
+- spacing improvements
+- theme implementation approach

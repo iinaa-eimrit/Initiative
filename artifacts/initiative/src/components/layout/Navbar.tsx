@@ -1,12 +1,14 @@
 import { Link, useLocation } from "wouter";
-import { Sparkles, Menu, X } from "lucide-react";
+import { Sparkles, Menu, X, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTheme } from "@/components/ThemeProvider";
 
 export function Navbar() {
   const [location] = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -17,16 +19,16 @@ export function Navbar() {
   return (
     <nav className="fixed top-0 w-full z-50 glass-card border-b border-border/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+        <div className="flex justify-between items-center h-14">
           <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-teal-400 flex items-center justify-center text-white shadow-lg shadow-primary/20 group-hover:shadow-primary/40 group-hover:scale-105 transition-all duration-300">
-              <Sparkles className="w-5 h-5" />
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-teal-400 flex items-center justify-center text-white shadow-lg shadow-primary/20 group-hover:shadow-primary/40 group-hover:scale-105 transition-all duration-300">
+              <Sparkles className="w-4 h-4" />
             </div>
-            <span className="font-display font-bold text-2xl tracking-tight">Initiative</span>
+            <span className="font-display font-bold text-xl tracking-tight">Initiative</span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-8">
-            <div className="flex gap-6">
+          <div className="hidden md:flex items-center gap-6">
+            <div className="flex gap-5">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
@@ -39,19 +41,35 @@ export function Navbar() {
                 </Link>
               ))}
             </div>
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-full hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-all"
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
             <Link href="/initiatives/new">
-              <Button className="rounded-full px-6 shadow-md shadow-primary/20 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
-                <Sparkles className="w-4 h-4 mr-2" /> Generate with AI
+              <Button size="sm" className="rounded-full px-5 shadow-md shadow-primary/20 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200">
+                <Sparkles className="w-3.5 h-3.5 mr-1.5" /> Generate with AI
               </Button>
             </Link>
           </div>
 
-          <button
-            className="md:hidden p-2 text-foreground"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          >
-            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          <div className="flex items-center gap-2 md:hidden">
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-full hover:bg-muted/50 text-muted-foreground"
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+            <button
+              className="p-2 text-foreground"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -61,15 +79,15 @@ export function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-background border-b border-border overflow-hidden"
+            className="md:hidden bg-card border-b border-border overflow-hidden"
           >
-            <div className="px-4 pt-2 pb-6 space-y-4 flex flex-col">
+            <div className="px-4 pt-2 pb-4 space-y-2 flex flex-col">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   href={link.href}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className={`block px-3 py-2 rounded-md text-base font-medium ${
+                  className={`block px-3 py-2 rounded-lg text-sm font-medium ${
                     location === link.href ? "bg-primary/10 text-primary" : "text-foreground hover:bg-muted"
                   }`}
                 >
@@ -77,8 +95,8 @@ export function Navbar() {
                 </Link>
               ))}
               <Link href="/initiatives/new" onClick={() => setIsMobileMenuOpen(false)}>
-                <Button className="w-full mt-2">
-                  <Sparkles className="w-4 h-4 mr-2" /> Generate with AI
+                <Button size="sm" className="w-full mt-1">
+                  <Sparkles className="w-3.5 h-3.5 mr-1.5" /> Generate with AI
                 </Button>
               </Link>
             </div>

@@ -100,8 +100,9 @@ Every package extends `tsconfig.base.json` which sets `composite: true`. The roo
 
 React + Vite frontend for the Initiative platform.
 
-- Pages: Home (landing with animated counters, live activity ticker, floating cards), Initiatives (social impact feed with StoryBar, post cards, Like/Comment/Share/Join/Donate), CreateInitiative (AI + manual), InitiativeDetail (sticky action bar, tab layout: Overview/Updates/Volunteers/Impact/Blog), Login, Signup, Dashboard (card leaderboard with medals, trending hashtags, social proof widget)
-- Components: Navbar (auth-aware), StoryBar (Instagram-style circular avatar stories), TrustScoreBadge, TrustBreakdown, LifecycleBadge, LifecycleTracker, ui/ (shadcn-style with custom Progress indicatorClassName support)
+- Pages: Home (landing with animated counters, live activity ticker, floating cards), Initiatives (2-column grid + sticky sidebar with leaderboard/trending/AI CTA/social proof), CreateInitiative (AI + manual), InitiativeDetail (sticky action bar, tab layout: Overview/Updates/Volunteers/Impact/Blog), Login, Signup, Dashboard (stat cards, active missions feed, leaderboard with medals, trending hashtags, social proof widget)
+- Components: Navbar (compact h-14, theme toggle), ThemeProvider (dark/light with localStorage persistence), StoryBar (Instagram-style circular avatar stories), TrustScoreBadge, TrustBreakdown, LifecycleBadge, LifecycleTracker, ui/ (shadcn-style with custom Progress indicatorClassName support)
+- Theme: Dark/light mode via `.dark` class on `<html>`, CSS variables in index.css, ThemeProvider context, pre-hydration script in index.html prevents FOUC, smooth transitions via `.dark-transition` class during toggle
 - Hooks: useAuth (JWT auth context with setAuthTokenGetter)
 - Uses React Query hooks from `@workspace/api-client-react`
 - Routing via `wouter`

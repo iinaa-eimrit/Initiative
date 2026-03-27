@@ -127,52 +127,52 @@ export default function InitiativeDetail() {
   const isCompleted = initiative.status === "completed";
 
   return (
-    <div className="min-h-screen bg-background pb-24">
-      <div className="w-full bg-gradient-mesh py-8 pt-28 relative overflow-hidden">
+    <div className="min-h-screen bg-background pb-16">
+      <div className="w-full bg-gradient-mesh py-6 pt-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(16,185,129,0.08),transparent_60%)]" />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <Link href="/initiatives" className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors w-fit bg-white/50 backdrop-blur-md px-3 py-1 rounded-full mb-6">
-            <ArrowLeft className="w-4 h-4 mr-2" /> Back to feed
+          <Link href="/initiatives" className="inline-flex items-center text-xs font-medium text-muted-foreground hover:text-foreground transition-colors w-fit bg-card/50 backdrop-blur-md px-2.5 py-1 rounded-full mb-4">
+            <ArrowLeft className="w-3.5 h-3.5 mr-1.5" /> Back to feed
           </Link>
 
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-teal-400 flex items-center justify-center text-white font-bold text-lg ring-2 ring-white shadow-lg">
+          <div className="flex items-center gap-2.5 mb-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-teal-400 flex items-center justify-center text-white font-bold text-sm ring-2 ring-card shadow-lg">
               {initiative.creatorName.charAt(0)}
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-base">{initiative.creatorName}</span>
-                <Badge variant="outline" className="text-[10px] bg-white/80">{initiative.location?.split(",")[0]}</Badge>
+                <span className="font-bold text-sm">{initiative.creatorName}</span>
+                <Badge variant="outline" className="text-[10px] bg-card/80">{initiative.location?.split(",")[0]}</Badge>
               </div>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
                 <Calendar className="w-3 h-3" />
                 <span>Started {format(new Date(initiative.createdAt), 'MMM d, yyyy')}</span>
               </div>
             </div>
           </div>
 
-          <div className="flex gap-2 mb-3 flex-wrap">
-            <Badge className="bg-primary hover:bg-primary/90 text-primary-foreground border-none text-sm px-3 py-1 capitalize">{initiative.category}</Badge>
-            <Badge variant="outline" className={`bg-white/80 backdrop-blur text-foreground border-border text-sm px-3 py-1 capitalize ${isCompleted ? 'border-emerald-300 text-emerald-700' : ''}`}>
+          <div className="flex gap-1.5 mb-2 flex-wrap">
+            <Badge className="bg-primary hover:bg-primary/90 text-primary-foreground border-none text-xs px-2.5 py-0.5 capitalize">{initiative.category}</Badge>
+            <Badge variant="outline" className={`bg-card/80 backdrop-blur text-foreground border-border text-xs px-2.5 py-0.5 capitalize ${isCompleted ? 'border-emerald-300 text-emerald-700 dark:border-emerald-700 dark:text-emerald-400' : ''}`}>
               {isCompleted && <CheckCircle2 className="w-3 h-3 mr-1" />}
               {initiative.status}
             </Badge>
           </div>
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-foreground max-w-4xl leading-tight mb-6">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-display font-bold text-foreground max-w-4xl leading-tight mb-4">
             {initiative.title}
           </h1>
 
-          <Card className="rounded-2xl border-border/40 shadow-lg overflow-hidden bg-white/80 backdrop-blur-sm">
-            <CardContent className="p-6">
+          <Card className="rounded-xl border-border/40 shadow-lg overflow-hidden bg-card/80 backdrop-blur-sm">
+            <CardContent className="p-4">
               <LifecycleTracker currentStage={initiative.lifecycleStage} />
             </CardContent>
           </Card>
         </div>
       </div>
 
-      <div className="sticky top-20 z-40 bg-white/80 backdrop-blur-xl border-b border-border/50 shadow-sm">
+      <div className="sticky top-14 z-40 bg-card/80 backdrop-blur-xl border-b border-border/50 shadow-sm">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14">
+          <div className="flex items-center justify-between h-12">
             <div className="flex items-center gap-2">
               <motion.button
                 whileTap={{ scale: 0.9 }}
@@ -276,11 +276,11 @@ export default function InitiativeDetail() {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
-        <div className="grid lg:grid-cols-3 gap-10">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+        <div className="grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="w-full rounded-xl mb-6 h-11 bg-muted/50 p-1">
+              <TabsList className="w-full rounded-lg mb-4 h-9 bg-muted/50 p-0.5">
                 <TabsTrigger value="overview" className="flex-1 rounded-lg text-sm data-[state=active]:shadow-sm">Overview</TabsTrigger>
                 <TabsTrigger value="updates" className="flex-1 rounded-lg text-sm data-[state=active]:shadow-sm">
                   Updates {initiative.updates?.length ? `(${initiative.updates.length})` : ""}
@@ -619,33 +619,33 @@ export default function InitiativeDetail() {
           </div>
 
           <div className="lg:col-span-1">
-            <div className="sticky top-36 space-y-6">
-              <Card className="rounded-3xl border-border/60 shadow-xl shadow-black/5 overflow-hidden">
-                <div className="h-1.5 w-full bg-primary"></div>
-                <CardContent className="p-6">
-                  <div className="mb-4">
-                    <div className="flex items-baseline gap-2 mb-1">
-                      <span className="text-4xl font-bold font-display text-foreground">₹{initiative.fundingRaised.toLocaleString('en-IN')}</span>
-                      <span className="text-muted-foreground font-medium">raised</span>
+            <div className="sticky top-28 space-y-4">
+              <Card className="rounded-xl border-border/60 shadow-xl overflow-hidden">
+                <div className="h-1 w-full bg-primary" />
+                <CardContent className="p-4">
+                  <div className="mb-3">
+                    <div className="flex items-baseline gap-2 mb-0.5">
+                      <span className="text-3xl font-bold font-display text-foreground">₹{initiative.fundingRaised.toLocaleString('en-IN')}</span>
+                      <span className="text-muted-foreground text-sm font-medium">raised</span>
                     </div>
-                    <p className="text-sm text-muted-foreground">of ₹{initiative.fundingGoal.toLocaleString('en-IN')} goal</p>
+                    <p className="text-xs text-muted-foreground">of ₹{initiative.fundingGoal.toLocaleString('en-IN')} goal</p>
                   </div>
 
-                  <Progress value={progressPercent} className="h-3 mb-4 bg-muted" indicatorClassName="bg-primary" />
-                  <div className="text-center text-sm font-bold text-primary mb-6">{Math.round(progressPercent)}% funded</div>
+                  <Progress value={progressPercent} className="h-2.5 mb-3 bg-muted" indicatorClassName="bg-primary" />
+                  <div className="text-center text-xs font-bold text-primary mb-4">{Math.round(progressPercent)}% funded</div>
 
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     <Dialog open={isDonateOpen} onOpenChange={setIsDonateOpen}>
                       <DialogTrigger asChild>
-                        <Button className="w-full rounded-xl h-11 font-semibold shadow-lg shadow-primary/20">
+                        <Button className="w-full rounded-lg h-9 text-sm font-semibold shadow-lg shadow-primary/20">
                           Back this project
                         </Button>
                       </DialogTrigger>
                     </Dialog>
                     <Dialog open={isVolunteerOpen} onOpenChange={setIsVolunteerOpen}>
                       <DialogTrigger asChild>
-                        <Button variant="outline" className="w-full rounded-xl h-11 font-semibold">
-                          <Users className="w-4 h-4 mr-2" /> Volunteer
+                        <Button variant="outline" className="w-full rounded-lg h-9 text-sm font-semibold">
+                          <Users className="w-3.5 h-3.5 mr-1.5" /> Volunteer
                         </Button>
                       </DialogTrigger>
                     </Dialog>
@@ -656,26 +656,26 @@ export default function InitiativeDetail() {
               <TrustBreakdown breakdown={initiative.trustScore?.breakdown} overall={initiative.trustScore?.overall ?? 0} />
 
               {initiative.topDonors && initiative.topDonors.length > 0 && (
-                <Card className="rounded-3xl border-border/60 overflow-hidden">
-                  <CardContent className="p-5">
-                    <h3 className="font-bold text-base mb-4 flex items-center gap-2">
-                      <Trophy className="w-4 h-4 text-amber-500" /> Top Supporters
+                <Card className="rounded-xl border-border/60 overflow-hidden">
+                  <CardContent className="p-4">
+                    <h3 className="font-bold text-sm mb-3 flex items-center gap-2">
+                      <Trophy className="w-3.5 h-3.5 text-amber-500" /> Top Supporters
                     </h3>
-                    <div className="space-y-3">
+                    <div className="space-y-2">
                       {initiative.topDonors.map((donor: any, idx: number) => (
                         <div key={idx} className="flex items-center justify-between">
-                          <div className="flex items-center gap-2.5">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
-                              idx === 0 ? 'bg-amber-100 text-amber-700' :
-                              idx === 1 ? 'bg-gray-100 text-gray-600' :
-                              idx === 2 ? 'bg-orange-100 text-orange-600' :
+                          <div className="flex items-center gap-2">
+                            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold ${
+                              idx === 0 ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30' :
+                              idx === 1 ? 'bg-gray-100 text-gray-600 dark:bg-gray-800/50' :
+                              idx === 2 ? 'bg-orange-100 text-orange-600 dark:bg-orange-900/30' :
                               'bg-muted text-muted-foreground'
                             }`}>
                               #{donor.rank}
                             </div>
-                            <span className="font-medium text-sm">{donor.donorName}</span>
+                            <span className="font-medium text-xs">{donor.donorName}</span>
                           </div>
-                          <span className="font-bold text-primary">₹{donor.totalAmount.toLocaleString('en-IN')}</span>
+                          <span className="font-bold text-xs text-primary">₹{donor.totalAmount.toLocaleString('en-IN')}</span>
                         </div>
                       ))}
                     </div>
