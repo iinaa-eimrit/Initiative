@@ -62,16 +62,19 @@ export default function Initiatives() {
   const topVolunteerInitiatives = [...(initiatives ?? [])].sort((a, b) => b.volunteerCount - a.volunteerCount).slice(0, 5);
 
   const handleLike = (id: number, title: string) => {
+    const alreadyLiked = likedIds.has(id);
     setLikedIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) {
         next.delete(id);
       } else {
         next.add(id);
-        toast({ title: "Liked!", description: `You liked "${title.split(":")[0]}"` });
       }
       return next;
     });
+    if (!alreadyLiked) {
+      toast({ title: "Liked!", description: `You liked "${title.split(":")[0]}"` });
+    }
   };
 
   const handleShare = (title: string) => {
@@ -86,17 +89,17 @@ export default function Initiatives() {
     <div className="min-h-screen bg-background pt-16 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-4">
-          <div className="bg-card rounded-xl border border-border/50 p-3 shadow-sm">
+          <div className="bg-card rounded-2xl border border-border/50 p-3 shadow-sm">
             <StoryBar stories={stories.slice(0, 10)} onStoryClick={(id) => navigate(`/initiatives/${id}`)} />
           </div>
         </div>
 
-        <div className="bg-card rounded-xl border border-border/50 p-3 mb-4 shadow-sm">
+        <div className="bg-card rounded-2xl border border-border/50 p-3 mb-4 shadow-sm">
           <div className="relative mb-2.5">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               placeholder="Search initiatives..."
-              className="pl-9 h-9 bg-muted/30 border-transparent focus:bg-card text-sm rounded-lg"
+              className="pl-9 h-9 bg-muted/30 border-transparent focus:bg-card text-sm rounded-xl"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -106,10 +109,10 @@ export default function Initiatives() {
               <button
                 key={c}
                 onClick={() => setCategory(c)}
-                className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
+                className={`px-3.5 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-200 ${
                   category === c
-                    ? "bg-primary text-white shadow-sm"
-                    : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                    ? "bg-gradient-to-r from-primary to-teal-500 text-white shadow-sm"
+                    : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
                 }`}
               >
                 {categoryLabels[c] || c}
@@ -123,15 +126,15 @@ export default function Initiatives() {
             {isLoading ? (
               <div className="grid sm:grid-cols-2 gap-4">
                 {[1, 2, 3, 4].map(i => (
-                  <Card key={i} className="animate-pulse h-[280px] bg-muted/20 border-transparent rounded-xl" />
+                  <Card key={i} className="animate-pulse h-[280px] bg-muted/20 border-transparent rounded-2xl" />
                 ))}
               </div>
             ) : error ? (
-              <div className="text-center py-12 bg-destructive/5 rounded-xl border border-destructive/20">
+              <div className="text-center py-12 bg-destructive/5 rounded-2xl border border-destructive/20">
                 <p className="text-destructive font-medium text-sm">Failed to load initiatives. Please try again later.</p>
               </div>
             ) : !initiatives?.length ? (
-              <div className="text-center py-16 bg-card rounded-xl border border-border/50">
+              <div className="text-center py-16 bg-card rounded-2xl border border-border/50">
                 <Heart className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-50" />
                 <h3 className="text-lg font-bold mb-1.5">No initiatives found</h3>
                 <p className="text-muted-foreground text-sm mb-4">Be the first to start something in this category!</p>
@@ -152,13 +155,12 @@ export default function Initiatives() {
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.03 }}
-                      className="card-hover"
                     >
-                      <Card className="rounded-xl overflow-hidden border-border/50 bg-card shadow-sm hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
+                      <Card className="card-elevated overflow-hidden h-full flex flex-col">
                         <div className="p-3 pb-2">
                           <div className="flex items-center justify-between">
                             <Link href={`/initiatives/${initiative.id}`} className="flex items-center gap-2 cursor-pointer group">
-                              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-teal-400 flex items-center justify-center text-white font-bold text-xs ring-2 ring-primary/20">
+                              <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-teal-400 flex items-center justify-center text-white font-bold text-xs shadow-sm">
                                 {initiative.creatorName.charAt(0)}
                               </div>
                               <div>
@@ -183,8 +185,8 @@ export default function Initiatives() {
                           <div className={`relative h-32 bg-gradient-to-br ${COVER_GRADIENTS[i % COVER_GRADIENTS.length]} flex items-center justify-center overflow-hidden`}>
                             <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.3),transparent_70%)]" />
                             <span className="text-5xl opacity-40 select-none">{COVER_ICONS[i % COVER_ICONS.length]}</span>
-                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent p-3 pt-6">
-                              <h3 className="text-white font-bold text-sm leading-tight drop-shadow-md line-clamp-2">
+                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-3 pt-8">
+                              <h3 className="text-white font-bold text-sm leading-tight drop-shadow-lg line-clamp-2">
                                 {initiative.title}
                               </h3>
                             </div>
@@ -203,7 +205,7 @@ export default function Initiatives() {
                             <Progress
                               value={progress}
                               className="h-1.5 bg-primary/10 rounded-full"
-                              indicatorClassName="bg-gradient-to-r from-primary to-teal-400 rounded-full"
+                              indicatorClassName="progress-gradient"
                             />
                             <div className="flex items-center justify-between text-[10px] text-muted-foreground">
                               <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {initiative.volunteerCount} volunteers</span>
@@ -254,7 +256,7 @@ export default function Initiatives() {
                                 </Button>
                               </Link>
                               <Link href={`/initiatives/${initiative.id}`}>
-                                <Button size="sm" className="rounded-full h-7 text-[10px] px-2.5">
+                                <Button size="sm" className="rounded-full h-7 text-[10px] px-2.5 bg-gradient-to-r from-primary to-teal-500 border-0">
                                   Donate
                                 </Button>
                               </Link>
@@ -277,23 +279,26 @@ export default function Initiatives() {
           </div>
 
           <div className="hidden lg:block space-y-4 sticky top-16 self-start">
-            <Card className="rounded-xl border-border/50 bg-card overflow-hidden">
+            <Card className="card-elevated overflow-hidden">
               <div className="h-1 bg-gradient-to-r from-amber-400 via-orange-400 to-red-400" />
               <CardContent className="p-4">
                 <h3 className="font-semibold text-sm flex items-center gap-2 mb-3">
-                  <Trophy className="w-4 h-4 text-amber-500" /> Leaderboard
+                  <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+                    <Trophy className="w-3.5 h-3.5 text-white" />
+                  </div>
+                  Leaderboard
                 </h3>
                 <div className="space-y-1.5">
                   {topVolunteerInitiatives.map((init, i) => (
                     <Link key={init.id} href={`/initiatives/${init.id}`}>
                       <motion.div
                         whileHover={{ x: 3 }}
-                        className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-muted/50 transition-all cursor-pointer"
+                        className="flex items-center gap-2.5 p-2 rounded-xl hover:bg-muted/50 transition-all cursor-pointer"
                       >
-                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold ${
-                          i === 0 ? "bg-amber-100 text-amber-600 ring-2 ring-amber-300 dark:bg-amber-900/30" :
-                          i === 1 ? "bg-gray-100 text-gray-600 ring-2 ring-gray-300 dark:bg-gray-800/50" :
-                          i === 2 ? "bg-orange-100 text-orange-600 ring-2 ring-orange-300 dark:bg-orange-900/30" :
+                        <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold ${
+                          i === 0 ? "bg-gradient-to-br from-amber-400 to-amber-600 text-white shadow-sm" :
+                          i === 1 ? "bg-gradient-to-br from-gray-300 to-gray-500 text-white shadow-sm" :
+                          i === 2 ? "bg-gradient-to-br from-orange-400 to-orange-600 text-white shadow-sm" :
                           "bg-muted text-muted-foreground"
                         }`}>
                           {i === 0 ? <Award className="w-3.5 h-3.5" /> : i + 1}
@@ -312,27 +317,29 @@ export default function Initiatives() {
               </CardContent>
             </Card>
 
-            <Card className="rounded-xl border-border/50 bg-gradient-to-br from-primary/5 to-primary/10">
-              <CardContent className="p-4 text-center">
-                <Sparkles className="w-6 h-6 text-primary mx-auto mb-2" />
+            <Card className="overflow-hidden border-0 bg-gradient-to-br from-primary/10 via-primary/5 to-teal-500/10 dark:from-primary/15 dark:to-teal-500/15 shadow-lg">
+              <CardContent className="p-5 text-center">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary to-teal-500 flex items-center justify-center text-white mx-auto mb-3 shadow-lg">
+                  <Sparkles className="w-5 h-5" />
+                </div>
                 <h3 className="font-semibold text-sm mb-1">Start with AI</h3>
                 <p className="text-xs text-muted-foreground mb-3">Describe your idea and let AI build your initiative</p>
                 <Link href="/initiatives/new">
-                  <Button size="sm" className="rounded-full w-full text-xs">
+                  <Button size="sm" className="rounded-full w-full text-xs bg-gradient-to-r from-primary to-teal-500 border-0 shadow-md">
                     <Sparkles className="w-3 h-3 mr-1.5" /> Generate with AI
                   </Button>
                 </Link>
               </CardContent>
             </Card>
 
-            <Card className="rounded-xl border-border/50 bg-card">
+            <Card className="card-elevated">
               <CardContent className="p-4">
                 <h3 className="font-semibold text-xs mb-2.5 flex items-center gap-1.5">
                   <Flame className="w-3.5 h-3.5 text-orange-500" /> Trending
                 </h3>
                 <div className="flex flex-wrap gap-1.5">
                   {TRENDING_TAGS.map((tag) => (
-                    <Badge key={tag} variant="secondary" className="rounded-full cursor-pointer hover:bg-primary/10 hover:text-primary transition-colors text-[10px] px-2 py-0.5">
+                    <Badge key={tag} variant="secondary" className="rounded-full cursor-pointer hover:bg-primary/10 hover:text-primary transition-all duration-200 text-[10px] px-2.5 py-0.5">
                       {tag}
                     </Badge>
                   ))}
@@ -340,24 +347,24 @@ export default function Initiatives() {
               </CardContent>
             </Card>
 
-            <Card className="rounded-xl border-border/50 bg-card">
+            <Card className="card-elevated">
               <CardContent className="p-4">
-                <h3 className="font-semibold text-xs mb-2.5 flex items-center gap-1.5">
+                <h3 className="font-semibold text-xs mb-3 flex items-center gap-1.5">
                   <TrendingUp className="w-3.5 h-3.5 text-primary" /> Social Proof
                 </h3>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground flex items-center gap-1"><Eye className="w-3 h-3" /> Views</span>
-                    <span className="font-bold">2,847</span>
-                  </div>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground flex items-center gap-1"><Users className="w-3 h-3" /> Joins</span>
-                    <span className="font-bold text-primary">+14</span>
-                  </div>
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-muted-foreground flex items-center gap-1"><Heart className="w-3 h-3" /> Likes</span>
-                    <span className="font-bold text-red-500">+38</span>
-                  </div>
+                <div className="space-y-2.5">
+                  {[
+                    { label: "Views", value: "2,847", icon: Eye, color: "text-foreground" },
+                    { label: "Joins", value: "+14", icon: Users, color: "text-primary" },
+                    { label: "Likes", value: "+38", icon: Heart, color: "text-rose-500" },
+                  ].map((item) => (
+                    <div key={item.label} className="flex items-center justify-between text-xs">
+                      <span className="text-muted-foreground flex items-center gap-1.5">
+                        <item.icon className="w-3.5 h-3.5" /> {item.label}
+                      </span>
+                      <span className={`font-bold ${item.color}`}>{item.value}</span>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>

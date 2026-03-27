@@ -101,8 +101,17 @@ Every package extends `tsconfig.base.json` which sets `composite: true`. The roo
 React + Vite frontend for the Initiative platform.
 
 - Pages: Home (landing with animated counters, live activity ticker, floating cards), Initiatives (2-column grid + sticky sidebar with leaderboard/trending/AI CTA/social proof), CreateInitiative (AI + manual), InitiativeDetail (sticky action bar, tab layout: Overview/Updates/Volunteers/Impact/Blog), Login, Signup, Dashboard (stat cards, active missions feed, leaderboard with medals, trending hashtags, social proof widget)
-- Components: Navbar (compact h-14, theme toggle), ThemeProvider (dark/light with localStorage persistence), StoryBar (Instagram-style circular avatar stories), TrustScoreBadge, TrustBreakdown, LifecycleBadge, LifecycleTracker, ui/ (shadcn-style with custom Progress indicatorClassName support)
+- Components: Navbar (compact h-14, pill-style nav tabs, glassmorphic glass-nav, theme toggle), ThemeProvider (dark/light with localStorage persistence), StoryBar (Instagram-style story-ring conic gradient avatars), TrustScoreBadge, TrustBreakdown, LifecycleBadge, LifecycleTracker, ui/ (shadcn-style with custom Progress indicatorClassName support)
 - Theme: Dark/light mode via `.dark` class on `<html>`, CSS variables in index.css, ThemeProvider context, pre-hydration script in index.html prevents FOUC, smooth transitions via `.dark-transition` class during toggle
+- Visual Design System:
+  - **Gradients**: All CTAs use `bg-gradient-to-r from-primary to-teal-500 border-0`; stat icon blocks use contextual gradients (emerald→teal, blue→indigo, amber→orange, purple→fuchsia)
+  - **Cards**: `card-elevated` class (rounded-2xl, border-border/60, shadow-md, cubic-bezier hover lift to translateY(-3px))
+  - **Progress**: `progress-gradient` (linear-gradient emerald→teal→cyan); active progress bars use gradient indicators
+  - **Glass effects**: `glass-nav` (bg-card/70 backdrop-blur-2xl, gradient border-image), `glass-card` (bg-card/80 backdrop-blur-xl border-white/20)
+  - **Text gradients**: `text-gradient-hero` (animated background-position shift), `text-gradient` (static 135deg)
+  - **Background**: `bg-gradient-mesh` (3 radial gradient layers for depth)
+  - **Animations**: gradient-shift (6s), float-slow (4s), shimmer (3s), ai-pulse (3s), like-pop (0.3s)
+  - **Fonts**: DM Sans (body, --app-font-sans), Syne (headings, --app-font-display)
 - Hooks: useAuth (JWT auth context with setAuthTokenGetter)
 - Uses React Query hooks from `@workspace/api-client-react`
 - Routing via `wouter`

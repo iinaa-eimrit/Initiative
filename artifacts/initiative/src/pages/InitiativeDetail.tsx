@@ -126,6 +126,14 @@ export default function InitiativeDetail() {
   const plan = initiative.structuredPlan as any;
   const isCompleted = initiative.status === "completed";
 
+  const handleLikeClick = () => {
+    const wasLiked = isLiked;
+    setIsLiked(!isLiked);
+    if (!wasLiked) {
+      toast({ title: "Liked!", description: `You liked "${initiative.title.split(":")[0]}"` });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background pb-16">
       <div className="w-full bg-gradient-mesh py-6 pt-20 relative overflow-hidden">
@@ -152,7 +160,7 @@ export default function InitiativeDetail() {
           </div>
 
           <div className="flex gap-1.5 mb-2 flex-wrap">
-            <Badge className="bg-primary hover:bg-primary/90 text-primary-foreground border-none text-xs px-2.5 py-0.5 capitalize">{initiative.category}</Badge>
+            <Badge className="bg-gradient-to-r from-primary to-teal-500 hover:from-primary/90 text-primary-foreground border-none text-xs px-2.5 py-0.5 capitalize">{initiative.category}</Badge>
             <Badge variant="outline" className={`bg-card/80 backdrop-blur text-foreground border-border text-xs px-2.5 py-0.5 capitalize ${isCompleted ? 'border-emerald-300 text-emerald-700 dark:border-emerald-700 dark:text-emerald-400' : ''}`}>
               {isCompleted && <CheckCircle2 className="w-3 h-3 mr-1" />}
               {initiative.status}
@@ -162,7 +170,7 @@ export default function InitiativeDetail() {
             {initiative.title}
           </h1>
 
-          <Card className="rounded-xl border-border/40 shadow-lg overflow-hidden bg-card/80 backdrop-blur-sm">
+          <Card className="card-elevated overflow-hidden">
             <CardContent className="p-4">
               <LifecycleTracker currentStage={initiative.lifecycleStage} />
             </CardContent>
@@ -176,12 +184,9 @@ export default function InitiativeDetail() {
             <div className="flex items-center gap-2">
               <motion.button
                 whileTap={{ scale: 0.9 }}
-                onClick={() => {
-                  setIsLiked(!isLiked);
-                  if (!isLiked) toast({ title: "Liked!", description: `You liked "${initiative.title.split(":")[0]}"` });
-                }}
+                onClick={handleLikeClick}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                  isLiked ? "bg-red-50 text-red-500" : "hover:bg-muted/50 text-muted-foreground"
+                  isLiked ? "bg-red-50 text-red-500 dark:bg-red-900/20" : "hover:bg-muted/50 text-muted-foreground"
                 }`}
               >
                 <Heart className={`w-4 h-4 ${isLiked ? "fill-red-500 text-red-500" : ""}`} />
@@ -226,7 +231,7 @@ export default function InitiativeDetail() {
                       <FormField control={volunteerForm.control} name="message" render={({ field }) => (
                         <FormItem><FormLabel>Message (optional)</FormLabel><FormControl><Textarea {...field} className="rounded-xl" /></FormControl><FormMessage /></FormItem>
                       )} />
-                      <Button type="submit" className="w-full rounded-xl" disabled={volunteerMutation.isPending}>
+                      <Button type="submit" className="w-full rounded-xl bg-gradient-to-r from-primary to-teal-500 border-0" disabled={volunteerMutation.isPending}>
                         {volunteerMutation.isPending ? "Signing up..." : "Join as Volunteer"}
                       </Button>
                     </form>
@@ -235,7 +240,7 @@ export default function InitiativeDetail() {
               </Dialog>
               <Dialog open={isDonateOpen} onOpenChange={setIsDonateOpen}>
                 <DialogTrigger asChild>
-                  <Button size="sm" className="rounded-full h-9 px-4 text-xs">
+                  <Button size="sm" className="rounded-full h-9 px-4 text-xs bg-gradient-to-r from-primary to-teal-500 border-0 shadow-md shadow-primary/20">
                     Donate
                   </Button>
                 </DialogTrigger>
@@ -256,7 +261,7 @@ export default function InitiativeDetail() {
                       )} />
                       <div className="flex gap-2">
                         {[100, 500, 1000, 5000].map(amt => (
-                          <Button key={amt} type="button" variant="outline" size="sm" className="rounded-full flex-1 text-xs" onClick={() => donateForm.setValue("amount", amt)}>
+                          <Button key={amt} type="button" variant="outline" size="sm" className="rounded-full flex-1 text-xs hover:bg-primary/5 hover:text-primary hover:border-primary/30" onClick={() => donateForm.setValue("amount", amt)}>
                             ₹{amt.toLocaleString('en-IN')}
                           </Button>
                         ))}
@@ -264,7 +269,7 @@ export default function InitiativeDetail() {
                       <FormField control={donateForm.control} name="message" render={({ field }) => (
                         <FormItem><FormLabel>Message (optional)</FormLabel><FormControl><Textarea {...field} className="rounded-xl" /></FormControl><FormMessage /></FormItem>
                       )} />
-                      <Button type="submit" className="w-full rounded-xl" disabled={donateMutation.isPending}>
+                      <Button type="submit" className="w-full rounded-xl bg-gradient-to-r from-primary to-teal-500 border-0" disabled={donateMutation.isPending}>
                         {donateMutation.isPending ? "Processing..." : `Donate ₹${donateForm.watch('amount') || 0}`}
                       </Button>
                     </form>
@@ -305,13 +310,15 @@ export default function InitiativeDetail() {
                 {plan && (
                   <section>
                     <div className="flex items-center gap-2 mb-4">
-                      <Sparkles className="w-5 h-5 text-purple-600" />
+                      <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-purple-500 to-fuchsia-600 flex items-center justify-center text-white shadow-md">
+                        <Sparkles className="w-4 h-4" />
+                      </div>
                       <h2 className="text-2xl font-bold">AI-Generated Execution Plan</h2>
                     </div>
 
-                    <Card className="rounded-2xl border-purple-100 bg-purple-50/30 mb-6">
+                    <Card className="card-elevated border-purple-100 dark:border-purple-900/30 bg-purple-50/30 dark:bg-purple-900/10 mb-6">
                       <CardContent className="p-6">
-                        <h3 className="font-bold text-sm text-purple-700 uppercase tracking-wide mb-2">Problem Statement</h3>
+                        <h3 className="font-bold text-sm text-purple-700 dark:text-purple-400 uppercase tracking-wide mb-2">Problem Statement</h3>
                         <p className="text-muted-foreground">{plan.problemStatement}</p>
                       </CardContent>
                     </Card>
@@ -320,10 +327,10 @@ export default function InitiativeDetail() {
                       <h3 className="font-bold">Execution Steps</h3>
                       {plan.executionSteps?.map((step: string, i: number) => (
                         <div key={i} className="flex items-start gap-3">
-                          <div className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-primary/20 to-teal-500/20 text-primary flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 border border-primary/10">
                             {i + 1}
                           </div>
-                          <p className="text-sm text-muted-foreground">{step}</p>
+                          <p className="text-sm text-muted-foreground pt-1">{step}</p>
                         </div>
                       ))}
                     </div>
@@ -333,7 +340,7 @@ export default function InitiativeDetail() {
                         <h3 className="font-bold mb-3">Suggested Volunteer Roles</h3>
                         <div className="flex flex-wrap gap-2">
                           {plan.suggestedRoles.map((role: string, i: number) => (
-                            <span key={i} className="px-3 py-1.5 bg-purple-50 text-purple-700 rounded-full text-sm font-medium border border-purple-100">
+                            <span key={i} className="px-3 py-1.5 bg-purple-50 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400 rounded-full text-sm font-medium border border-purple-100 dark:border-purple-800/30">
                               {role}
                             </span>
                           ))}
@@ -362,24 +369,24 @@ export default function InitiativeDetail() {
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                           >
-                            <Card className={`rounded-2xl border transition-all ${
-                              milestoneCompleted ? 'border-green-200 bg-green-50/30' :
-                              isActive ? 'border-blue-200 bg-blue-50/20 shadow-md' :
+                            <Card className={`card-elevated transition-all ${
+                              milestoneCompleted ? 'border-emerald-200 dark:border-emerald-800/30 bg-emerald-50/30 dark:bg-emerald-900/10' :
+                              isActive ? 'border-blue-200 dark:border-blue-800/30 bg-blue-50/20 dark:bg-blue-900/10 shadow-lg' :
                               'border-border/50 bg-muted/20 opacity-75'
                             }`}>
                               <CardContent className="p-5">
                                 <div className="flex items-start justify-between mb-3">
-                                  <div className="flex items-center gap-2">
+                                  <div className="flex items-center gap-3">
                                     {milestoneCompleted ? (
-                                      <div className="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center">
+                                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 text-white flex items-center justify-center shadow-md">
                                         <CheckCircle2 className="w-4 h-4" />
                                       </div>
                                     ) : isLocked ? (
-                                      <div className="w-8 h-8 rounded-full bg-muted text-muted-foreground flex items-center justify-center">
+                                      <div className="w-9 h-9 rounded-xl bg-muted text-muted-foreground flex items-center justify-center">
                                         <Lock className="w-4 h-4" />
                                       </div>
                                     ) : (
-                                      <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
+                                      <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-400 to-indigo-500 text-white flex items-center justify-center shadow-md">
                                         <Unlock className="w-4 h-4" />
                                       </div>
                                     )}
@@ -391,8 +398,8 @@ export default function InitiativeDetail() {
                                   <div className="text-right shrink-0 ml-4">
                                     <div className="font-bold text-sm">₹{milestone.targetAmount.toLocaleString('en-IN')}</div>
                                     <Badge variant="outline" className={`text-xs capitalize ${
-                                      milestoneCompleted ? 'text-green-600 border-green-200' :
-                                      isActive ? 'text-blue-600 border-blue-200' : ''
+                                      milestoneCompleted ? 'text-emerald-600 border-emerald-200 dark:text-emerald-400 dark:border-emerald-800/30' :
+                                      isActive ? 'text-blue-600 border-blue-200 dark:text-blue-400 dark:border-blue-800/30' : ''
                                     }`}>
                                       {isLocked ? 'Locked' : milestone.status}
                                     </Badge>
@@ -402,8 +409,8 @@ export default function InitiativeDetail() {
                                   <div className="mt-2">
                                     <Progress
                                       value={milestoneProgress}
-                                      className={`h-2 ${milestoneCompleted ? 'bg-green-100' : 'bg-blue-100'}`}
-                                      indicatorClassName={milestoneCompleted ? 'bg-green-500' : 'bg-blue-500'}
+                                      className={`h-2 ${milestoneCompleted ? 'bg-emerald-100 dark:bg-emerald-900/20' : 'bg-blue-100 dark:bg-blue-900/20'}`}
+                                      indicatorClassName={milestoneCompleted ? 'bg-gradient-to-r from-emerald-400 to-emerald-600' : 'progress-gradient'}
                                     />
                                     <div className="text-xs text-muted-foreground mt-1 text-right">
                                       {Math.round(milestoneProgress)}% funded
@@ -428,12 +435,14 @@ export default function InitiativeDetail() {
                 {initiative.updates && initiative.updates.length > 0 ? (
                   <>
                     <div className="flex items-center gap-2 mb-2">
-                      <FileText className="w-5 h-5 text-orange-600" />
+                      <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white shadow-md">
+                        <FileText className="w-4 h-4" />
+                      </div>
                       <h2 className="text-2xl font-bold">Impact Proof Feed</h2>
-                      <Badge className="bg-orange-100 text-orange-700 border-none text-xs">{initiative.updates.length} updates</Badge>
+                      <Badge className="bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 border-none text-xs">{initiative.updates.length} updates</Badge>
                     </div>
                     <div className="relative">
-                      <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-orange-300 via-border to-transparent"></div>
+                      <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-orange-300 dark:from-orange-600 via-border to-transparent"></div>
                       <div className="space-y-6">
                         {initiative.updates.map((update, i) => (
                           <motion.div
@@ -443,8 +452,8 @@ export default function InitiativeDetail() {
                             transition={{ delay: i * 0.08 }}
                             className="relative pl-10"
                           >
-                            <div className="absolute left-2 top-2 w-5 h-5 rounded-full bg-white border-2 border-orange-300 z-10"></div>
-                            <Card className="rounded-2xl border-border/50 hover:shadow-md transition-shadow">
+                            <div className="absolute left-2 top-2 w-5 h-5 rounded-full bg-card border-2 border-orange-300 dark:border-orange-600 z-10"></div>
+                            <Card className="card-elevated">
                               <CardContent className="p-5">
                                 <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
                                   <Clock className="w-3 h-3" />
@@ -471,7 +480,9 @@ export default function InitiativeDetail() {
                 {suggestedVolunteers && suggestedVolunteers.length > 0 ? (
                   <>
                     <div className="flex items-center gap-2 mb-2">
-                      <Sparkles className="w-5 h-5 text-teal-600" />
+                      <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-teal-400 to-primary flex items-center justify-center text-white shadow-md">
+                        <Sparkles className="w-4 h-4" />
+                      </div>
                       <h2 className="text-2xl font-bold">AI-Suggested Volunteers</h2>
                     </div>
                     <div className="grid sm:grid-cols-2 gap-4">
@@ -482,20 +493,20 @@ export default function InitiativeDetail() {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: i * 0.08 }}
                         >
-                          <Card className="rounded-2xl border-border/50 hover:shadow-md transition-all hover:-translate-y-0.5">
+                          <Card className="card-elevated">
                             <CardContent className="p-5">
                               <div className="flex items-center gap-3 mb-3">
-                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-400 to-primary text-white flex items-center justify-center font-bold text-sm">
+                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-400 to-primary text-white flex items-center justify-center font-bold text-sm shadow-md">
                                   {vol.avatarInitials}
                                 </div>
                                 <div>
                                   <div className="font-bold text-sm">{vol.name}</div>
-                                  <div className="text-xs text-teal-600 font-medium">{vol.matchScore}% match</div>
+                                  <div className="text-xs text-primary font-medium">{vol.matchScore}% match</div>
                                 </div>
                               </div>
                               <div className="flex flex-wrap gap-1 mb-3">
                                 {vol.skills.slice(0, 3).map((skill, j) => (
-                                  <span key={j} className="px-2 py-0.5 bg-muted rounded-md text-[10px] font-medium">{skill}</span>
+                                  <span key={j} className="px-2 py-0.5 bg-muted rounded-full text-[10px] font-medium">{skill}</span>
                                 ))}
                               </div>
                               <p className="text-xs text-muted-foreground italic mb-3">"{vol.reason}"</p>
@@ -503,8 +514,8 @@ export default function InitiativeDetail() {
                                 size="sm"
                                 className={`w-full rounded-xl text-xs h-8 transition-all ${
                                   invitedVolunteers.has(i)
-                                    ? 'bg-teal-100 text-teal-700 hover:bg-teal-100 cursor-default'
-                                    : 'bg-teal-600 hover:bg-teal-700 text-white'
+                                    ? 'bg-teal-100 dark:bg-teal-900/20 text-teal-700 dark:text-teal-400 hover:bg-teal-100 cursor-default border border-teal-200 dark:border-teal-800/30'
+                                    : 'bg-gradient-to-r from-primary to-teal-500 text-white border-0 shadow-md shadow-primary/20'
                                 }`}
                                 disabled={invitedVolunteers.has(i)}
                                 onClick={() => {
@@ -537,35 +548,30 @@ export default function InitiativeDetail() {
 
               <TabsContent value="impact" className="space-y-6">
                 <div className="flex items-center gap-2 mb-2">
-                  <TrendingUp className="w-5 h-5 text-primary" />
+                  <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-cyan-500 flex items-center justify-center text-white shadow-md">
+                    <TrendingUp className="w-4 h-4" />
+                  </div>
                   <h2 className="text-2xl font-bold">Impact Metrics</h2>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <Card className="rounded-2xl">
-                    <CardContent className="p-5 text-center">
-                      <p className="text-3xl font-bold text-primary">{initiative.volunteerCount}</p>
-                      <p className="text-sm text-muted-foreground">Volunteers Engaged</p>
-                    </CardContent>
-                  </Card>
-                  <Card className="rounded-2xl">
-                    <CardContent className="p-5 text-center">
-                      <p className="text-3xl font-bold text-emerald-600">₹{initiative.fundingRaised.toLocaleString('en-IN')}</p>
-                      <p className="text-sm text-muted-foreground">Funds Raised</p>
-                    </CardContent>
-                  </Card>
-                  <Card className="rounded-2xl">
-                    <CardContent className="p-5 text-center">
-                      <p className="text-3xl font-bold text-blue-600">{initiative.milestones?.filter(m => m.status === 'completed').length ?? 0}/{initiative.milestones?.length ?? 0}</p>
-                      <p className="text-sm text-muted-foreground">Milestones Completed</p>
-                    </CardContent>
-                  </Card>
-                  <Card className="rounded-2xl">
-                    <CardContent className="p-5 text-center">
-                      <p className="text-3xl font-bold text-amber-600">{initiative.updates?.length ?? 0}</p>
-                      <p className="text-sm text-muted-foreground">Updates Posted</p>
-                    </CardContent>
-                  </Card>
+                  {[
+                    { value: initiative.volunteerCount, label: "Volunteers Engaged", gradient: "from-blue-500 to-indigo-600", icon: <Users className="w-5 h-5" /> },
+                    { value: `₹${initiative.fundingRaised.toLocaleString('en-IN')}`, label: "Funds Raised", gradient: "from-emerald-500 to-teal-600", icon: <Trophy className="w-5 h-5" /> },
+                    { value: `${initiative.milestones?.filter(m => m.status === 'completed').length ?? 0}/${initiative.milestones?.length ?? 0}`, label: "Milestones Completed", gradient: "from-amber-500 to-orange-600", icon: <CheckCircle2 className="w-5 h-5" /> },
+                    { value: initiative.updates?.length ?? 0, label: "Updates Posted", gradient: "from-purple-500 to-fuchsia-600", icon: <FileText className="w-5 h-5" /> },
+                  ].map((stat, i) => (
+                    <Card key={i} className="card-elevated overflow-hidden">
+                      <div className={`h-1 w-full bg-gradient-to-r ${stat.gradient}`} />
+                      <CardContent className="p-5 text-center">
+                        <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.gradient} flex items-center justify-center text-white shadow-md mx-auto mb-2`}>
+                          {stat.icon}
+                        </div>
+                        <p className="text-2xl font-bold">{stat.value}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{stat.label}</p>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
 
                 <TrustBreakdown breakdown={initiative.trustScore?.breakdown} overall={initiative.trustScore?.overall ?? 0} />
@@ -574,9 +580,11 @@ export default function InitiativeDetail() {
               {initiative.blogs && initiative.blogs.length > 0 && (
                 <TabsContent value="blog" className="space-y-6">
                   <div className="flex items-center gap-2 mb-2">
-                    <BookOpen className="w-5 h-5 text-emerald-600" />
+                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center text-white shadow-md">
+                      <BookOpen className="w-4 h-4" />
+                    </div>
                     <h2 className="text-2xl font-bold">Impact Stories</h2>
-                    <Badge className="bg-emerald-100 text-emerald-700 border-none text-xs">{initiative.blogs.length} {initiative.blogs.length === 1 ? 'story' : 'stories'}</Badge>
+                    <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-none text-xs">{initiative.blogs.length} {initiative.blogs.length === 1 ? 'story' : 'stories'}</Badge>
                   </div>
                   <div className="space-y-6">
                     {initiative.blogs.map((blog: any, i: number) => (
@@ -586,26 +594,26 @@ export default function InitiativeDetail() {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.1 }}
                       >
-                        <Card className="rounded-2xl border-emerald-200/50 overflow-hidden">
+                        <Card className="card-elevated overflow-hidden border-emerald-200/50 dark:border-emerald-800/30">
                           <div className="h-1.5 w-full bg-gradient-to-r from-emerald-400 to-teal-400" />
                           <CardContent className="p-6">
                             <h3 className="text-xl font-bold mb-4">{blog.title}</h3>
                             <div className="space-y-4">
                               <div>
-                                <h4 className="text-sm font-bold text-emerald-700 uppercase tracking-wide mb-2">The Story</h4>
+                                <h4 className="text-sm font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wide mb-2">The Story</h4>
                                 <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{blog.story}</p>
                               </div>
-                              <div className="bg-amber-50/50 rounded-xl p-4 border border-amber-100">
-                                <h4 className="text-sm font-bold text-amber-700 uppercase tracking-wide mb-2">Challenges Faced</h4>
+                              <div className="bg-amber-50/50 dark:bg-amber-900/10 rounded-xl p-4 border border-amber-100 dark:border-amber-800/20">
+                                <h4 className="text-sm font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wide mb-2">Challenges Faced</h4>
                                 <p className="text-sm text-muted-foreground leading-relaxed">{blog.challenges}</p>
                               </div>
                               <div>
-                                <h4 className="text-sm font-bold text-blue-700 uppercase tracking-wide mb-2">Outcome</h4>
+                                <h4 className="text-sm font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wide mb-2">Outcome</h4>
                                 <p className="text-sm text-muted-foreground leading-relaxed">{blog.outcome}</p>
                               </div>
-                              <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
-                                <h4 className="text-sm font-bold text-emerald-700 uppercase tracking-wide mb-2">Impact at a Glance</h4>
-                                <p className="text-sm font-medium text-emerald-800">{blog.impactSummary}</p>
+                              <div className="bg-emerald-50 dark:bg-emerald-900/10 rounded-xl p-4 border border-emerald-100 dark:border-emerald-800/20">
+                                <h4 className="text-sm font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wide mb-2">Impact at a Glance</h4>
+                                <p className="text-sm font-medium text-emerald-800 dark:text-emerald-300">{blog.impactSummary}</p>
                               </div>
                             </div>
                           </CardContent>
@@ -620,8 +628,8 @@ export default function InitiativeDetail() {
 
           <div className="lg:col-span-1">
             <div className="sticky top-28 space-y-4">
-              <Card className="rounded-xl border-border/60 shadow-xl overflow-hidden">
-                <div className="h-1 w-full bg-primary" />
+              <Card className="card-elevated overflow-hidden shadow-xl">
+                <div className="h-1 w-full progress-gradient" />
                 <CardContent className="p-4">
                   <div className="mb-3">
                     <div className="flex items-baseline gap-2 mb-0.5">
@@ -631,20 +639,20 @@ export default function InitiativeDetail() {
                     <p className="text-xs text-muted-foreground">of ₹{initiative.fundingGoal.toLocaleString('en-IN')} goal</p>
                   </div>
 
-                  <Progress value={progressPercent} className="h-2.5 mb-3 bg-muted" indicatorClassName="bg-primary" />
+                  <Progress value={progressPercent} className="h-2.5 mb-3 bg-muted" indicatorClassName="progress-gradient" />
                   <div className="text-center text-xs font-bold text-primary mb-4">{Math.round(progressPercent)}% funded</div>
 
                   <div className="space-y-2">
                     <Dialog open={isDonateOpen} onOpenChange={setIsDonateOpen}>
                       <DialogTrigger asChild>
-                        <Button className="w-full rounded-lg h-9 text-sm font-semibold shadow-lg shadow-primary/20">
+                        <Button className="w-full rounded-xl h-10 text-sm font-semibold shadow-lg shadow-primary/20 bg-gradient-to-r from-primary to-teal-500 border-0">
                           Back this project
                         </Button>
                       </DialogTrigger>
                     </Dialog>
                     <Dialog open={isVolunteerOpen} onOpenChange={setIsVolunteerOpen}>
                       <DialogTrigger asChild>
-                        <Button variant="outline" className="w-full rounded-lg h-9 text-sm font-semibold">
+                        <Button variant="outline" className="w-full rounded-xl h-10 text-sm font-semibold border-primary/30 text-primary hover:bg-primary/5">
                           <Users className="w-3.5 h-3.5 mr-1.5" /> Volunteer
                         </Button>
                       </DialogTrigger>
@@ -656,19 +664,23 @@ export default function InitiativeDetail() {
               <TrustBreakdown breakdown={initiative.trustScore?.breakdown} overall={initiative.trustScore?.overall ?? 0} />
 
               {initiative.topDonors && initiative.topDonors.length > 0 && (
-                <Card className="rounded-xl border-border/60 overflow-hidden">
+                <Card className="card-elevated overflow-hidden">
+                  <div className="h-1 w-full bg-gradient-to-r from-amber-400 via-orange-400 to-red-400" />
                   <CardContent className="p-4">
                     <h3 className="font-bold text-sm mb-3 flex items-center gap-2">
-                      <Trophy className="w-3.5 h-3.5 text-amber-500" /> Top Supporters
+                      <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+                        <Trophy className="w-3.5 h-3.5 text-white" />
+                      </div>
+                      Top Supporters
                     </h3>
                     <div className="space-y-2">
                       {initiative.topDonors.map((donor: any, idx: number) => (
                         <div key={idx} className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold ${
-                              idx === 0 ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30' :
-                              idx === 1 ? 'bg-gray-100 text-gray-600 dark:bg-gray-800/50' :
-                              idx === 2 ? 'bg-orange-100 text-orange-600 dark:bg-orange-900/30' :
+                            <div className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold ${
+                              idx === 0 ? 'bg-gradient-to-br from-amber-400 to-amber-600 text-white shadow-sm' :
+                              idx === 1 ? 'bg-gradient-to-br from-gray-300 to-gray-500 text-white shadow-sm' :
+                              idx === 2 ? 'bg-gradient-to-br from-orange-400 to-orange-600 text-white shadow-sm' :
                               'bg-muted text-muted-foreground'
                             }`}>
                               #{donor.rank}
